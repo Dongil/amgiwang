@@ -1,0 +1,75 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/auth-store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+
+export default function LoginPage() {
+  const router = useRouter();
+  const signIn = useAuthStore((s) => s.signIn);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    try {
+      await signIn(email, password);
+      router.push("/");
+    } catch (error) {
+      toast.error("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">암기왕</CardTitle>
+        <CardDescription>로그인하고 학습을 시작하세요</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">이메일</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="name@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">비밀번호</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="비밀번호 입력"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-3">
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "로그인 중..." : "로그인"}
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            계정이 없으신가요?{" "}
+            <Link href="/signup" className="font-medium text-primary hover:underline">
+              회원가입
+            </Link>
+          </p>
+        </CardFooter>
+      </form>
+    </Card>
+  );
+}

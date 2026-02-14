@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-02-14T10:09:34.269Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-14T07:30:00.000Z",
+    "activeFeatures": [
+      "amgiwang-mvp"
+    ],
+    "primaryFeature": "amgiwang-mvp",
+    "features": {
+      "amgiwang-mvp": {
+        "name": "암기왕 MVP",
+        "phase": "design",
+        "status": "completed",
+        "startedAt": "2026-02-14T06:50:00.000Z",
+        "documents": {
+          "plan": "docs/01-plan/plan-amgiwang.md",
+          "design-data": "docs/02-design/data-model.md",
+          "design-api": "docs/02-design/api-spec.md",
+          "design-component": "docs/02-design/component-spec.md"
+        }
+      }
+    },
+    "pipeline": {
+      "currentPhase": 2,
+      "level": "Dynamic",
+      "phaseHistory": [
+        {
+          "phase": "plan",
+          "completedAt": "2026-02-14T06:50:00.000Z",
+          "document": "docs/01-plan/plan-amgiwang.md"
+        },
+        {
+          "phase": "design",
+          "completedAt": "2026-02-14T07:30:00.000Z",
+          "documents": [
+            "docs/02-design/data-model.md",
+            "docs/02-design/api-spec.md",
+            "docs/02-design/component-spec.md"
+          ]
+        }
+      ]
+    },
+    "session": {
+      "startedAt": "2026-02-14T04:12:28.142Z",
+      "onboardingCompleted": true,
+      "lastActivity": "2026-02-14T07:30:00.000Z"
+    },
+    "history": [
+      {
+        "action": "plan_created",
+        "feature": "amgiwang-mvp",
+        "timestamp": "2026-02-14T06:50:00.000Z"
+      },
+      {
+        "action": "design_completed",
+        "feature": "amgiwang-mvp",
+        "timestamp": "2026-02-14T07:30:00.000Z"
+      }
+    ]
+  }
+}
