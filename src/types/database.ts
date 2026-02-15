@@ -61,24 +61,35 @@ export interface Card {
   updated_at: string;
 }
 
+export interface VocabMeaning {
+  pos: string;
+  meaning: string;
+  synonyms: string[];
+}
+
+export interface VocabRelated {
+  word: string;
+  meaning: string;
+}
+
 export interface VocabCard {
   id: string;
   deck_id: string;
   word: string;
   meaning: string;
-  meaning_sub: string | null;
   phonetic: string | null;
-  part_of_speech: string | null;
   example_sentence: string | null;
   example_translation: string | null;
-  synonyms: string[];
-  antonyms: string[];
+  meanings: VocabMeaning[];
+  antonyms: VocabRelated[];
+  derivatives: VocabRelated[];
   root: string | null;
   prefix: string | null;
   suffix: string | null;
   etymology_note: string | null;
   mnemonic: string | null;
   mnemonic_user: string | null;
+  tips: string | null;
   difficulty_level: number;
   tags: string[];
   position: number;

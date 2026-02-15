@@ -111,11 +111,6 @@ export default function DeckDetailPage({
             <span className="font-medium">{masteredRate}%</span>
           </div>
           <Progress value={masteredRate} className="mt-2 h-2" />
-          {plan ? (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Day {plan.current_day}/{plan.total_days} · 일일 {plan.daily_amount}장
-            </p>
-          ) : null}
         </CardContent>
       </Card>
 
@@ -146,19 +141,33 @@ export default function DeckDetailPage({
         </Button>
       </div>
 
-      {/* 학습 계획 미설정 시 */}
-      {!plan ? (
-        <Card>
-          <CardContent className="p-4">
-            <p className="text-sm text-muted-foreground">
-              학습 계획을 세우면 매일 진도를 관리할 수 있어요.
-            </p>
-            <Button asChild variant="outline" size="sm" className="mt-2">
-              <Link href={`/decks/${deckId}/study-plan`}>학습 계획 만들기</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      ) : null}
+      {/* 학습 계획 */}
+      <Card>
+        <CardContent className="p-4">
+          {plan ? (
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium">학습 계획</p>
+                <p className="text-xs text-muted-foreground">
+                  Day {plan.current_day}/{plan.total_days} · 일일 {plan.daily_amount}장
+                </p>
+              </div>
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/decks/${deckId}/study-plan`}>관리</Link>
+              </Button>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-muted-foreground">
+                학습 계획을 세우면 매일 진도를 관리할 수 있어요.
+              </p>
+              <Button asChild variant="outline" size="sm" className="mt-2">
+                <Link href={`/decks/${deckId}/study-plan`}>학습 계획 만들기</Link>
+              </Button>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       {/* 카드 수 */}
       <p className="text-center text-xs text-muted-foreground">

@@ -75,7 +75,17 @@ export default function StudyPlanPage({
       </div>
 
       {data.plan ? (
-        <PlanStatus plan={data.plan} />
+        <PlanStatus
+          plan={data.plan}
+          deckId={deckId}
+          totalCards={data.deck.card_count}
+          userId={user!.id}
+          onReset={() => {
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.studyPlans.byDeck(deckId),
+            });
+          }}
+        />
       ) : (
         <CreatePlanForm
           deckId={deckId}
@@ -95,11 +105,62 @@ export default function StudyPlanPage({
   );
 }
 
-function PlanStatus({ plan }: { plan: StudyPlan }) {
+function PlanStatus({
+  plan,
+  deckId,
+  totalCards,
+  userId,
+  onReset,
+}: {
+  plan: StudyPlan;
+  deckId: string;
+  totalCards: number;
+  userId: string;
+  onReset: () => void;
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [dailyAmount, setDailyAmount] = useState(plan.daily_amount);
+  const [confirmReset, setConfirmReset] = useState(false);
+
   const progressPercent =
     plan.total_days > 0
       ? Math.round(((plan.current_day - 1) / plan.total_days) * 100)
       : 0;
+
+  const updatePlan = useMutation({
+    mutationFn: async () => {
+      const newTotalDays = Math.max(1, Math.ceil(totalCards / dailyAmount));
+      const newEnd = new Date(plan.start_date);
+      newEnd.setDate(newEnd.getDate() + newTotalDays);
+      const { error } = await supabaseMutate("study_plans", "PATCH", {
+        daily_amount: dailyAmount,
+        total_days: newTotalDays,
+        end_date: newEnd.toISOString().split("T")[0],
+      }, { filter: `id=eq.${plan.id}` });
+      if (error) throw new Error(error);
+    },
+    onSuccess: () => {
+      toast.success("학습 계획이 수정되었습니다!");
+      setIsEditing(false);
+      onReset();
+    },
+    onError: () => toast.error("수정에 실패했습니다."),
+  });
+
+  const deletePlan = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabaseMutate("study_plans", "DELETE", undefined, {
+        filter: `id=eq.${plan.id}`,
+      });
+      if (error) throw new Error(error);
+    },
+    onSuccess: () => {
+      toast.success("학습 계획이 초기화되었습니다.");
+      setConfirmReset(false);
+      onReset();
+    },
+    onError: () => toast.error("초기화에 실패했습니다."),
+  });
 
   return (
     <div className="space-y-4">
@@ -136,6 +197,99 @@ function PlanStatus({ plan }: { plan: StudyPlan }) {
           </div>
         </CardContent>
       </Card>
+
+      {isEditing ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">일일 학습량 수정</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="editDaily">일일 학습량</Label>
+              <Input
+                id="editDaily"
+                type="number"
+                min={1}
+                max={totalCards}
+                value={dailyAmount}
+                onChange={(e) =>
+                  setDailyAmount(Math.max(1, Math.min(totalCards, Number(e.target.value))))
+                }
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              하루 <strong>{dailyAmount}장</strong> ×{" "}
+              <strong>{Math.max(1, Math.ceil(totalCards / dailyAmount))}일</strong>
+            </p>
+            <div className="flex gap-2">
+              <Button
+                className="flex-1"
+                onClick={() => updatePlan.mutate()}
+                disabled={updatePlan.isPending}
+              >
+                {updatePlan.isPending ? "저장 중..." : "저장"}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setDailyAmount(plan.daily_amount);
+                  setIsEditing(false);
+                }}
+              >
+                취소
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => setIsEditing(true)}
+          >
+            학습량 수정
+          </Button>
+          <Button
+            variant="destructive"
+            className="flex-1"
+            onClick={() => setConfirmReset(true)}
+          >
+            계획 초기화
+          </Button>
+        </div>
+      )}
+
+      {confirmReset && (
+        <Card className="border-destructive">
+          <CardContent className="space-y-3 p-4">
+            <p className="text-sm font-medium text-destructive">
+              학습 계획을 삭제하고 처음부터 다시 만드시겠습니까?
+            </p>
+            <p className="text-xs text-muted-foreground">
+              진행 기록(daily_progress)도 함께 삭제됩니다.
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="destructive"
+                className="flex-1"
+                onClick={() => deletePlan.mutate()}
+                disabled={deletePlan.isPending}
+              >
+                {deletePlan.isPending ? "삭제 중..." : "삭제"}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setConfirmReset(false)}
+              >
+                취소
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

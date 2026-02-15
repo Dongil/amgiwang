@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient, supabaseMutate } from "@/lib/supabase/client";
 import { queryKeys } from "@/lib/query-keys";
-import type { VocabCard } from "@/types/database";
+import type { VocabCard, VocabMeaning, VocabRelated } from "@/types/database";
 
 export function useVocabCards(deckId: string) {
   return useQuery({
@@ -31,18 +31,18 @@ export function useCreateVocabCard() {
       deck_id: string;
       word: string;
       meaning: string;
-      meaning_sub?: string;
+      meanings: VocabMeaning[];
       phonetic?: string;
-      part_of_speech?: string;
       example_sentence?: string;
       example_translation?: string;
-      synonyms?: string[];
-      antonyms?: string[];
+      derivatives?: VocabRelated[];
+      antonyms?: VocabRelated[];
       root?: string;
       prefix?: string;
       suffix?: string;
       etymology_note?: string;
       mnemonic?: string;
+      tips?: string;
       difficulty_level?: number;
       tags?: string[];
       position?: number;

@@ -1,8 +1,9 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-14T13:55:04.913Z",
+  "lastUpdated": "2026-02-15T11:51:24.960Z",
   "activeFeatures": [
     "amgiwang-mvp",
+    "vocab-card-redesign",
     "amgiwang",
     "card",
     "new",
@@ -19,8 +20,16 @@
     "(main)",
     "decks"
   ],
-  "primaryFeature": "amgiwang-mvp",
+  "primaryFeature": "vocab-card-redesign",
   "features": {
+    "vocab-card-redesign": {
+      "phase": "archived",
+      "matchRate": 100,
+      "iterationCount": 0,
+      "startedAt": "2026-02-15T11:50:00.000Z",
+      "archivedAt": "2026-02-15T12:30:00.000Z",
+      "archivedTo": "docs/archive/2026-02/vocab-card-redesign/"
+    },
     "amgiwang-mvp": {
       "phase": "archived",
       "matchRate": 92,
@@ -38,9 +47,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T12:18:57.922Z",
-        "lastUpdated": "2026-02-14T13:54:08.892Z"
+        "lastUpdated": "2026-02-15T11:51:24.960Z"
       },
-      "lastFile": "C:\\code\\amgiwang\\src\\hooks\\use-tts.ts"
+      "lastFile": "C:\\code\\amgiwang\\src\\hooks\\use-vocab-cards.ts"
     },
     "card": {
       "phase": "do",
@@ -51,7 +60,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T12:19:40.876Z",
-        "lastUpdated": "2026-02-14T13:53:29.135Z"
+        "lastUpdated": "2026-02-15T11:50:10.862Z"
       },
       "lastFile": "C:\\code\\amgiwang\\src\\components\\card\\vocab-card-form.tsx"
     },
@@ -64,9 +73,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T12:24:28.203Z",
-        "lastUpdated": "2026-02-14T13:25:06.482Z"
+        "lastUpdated": "2026-02-15T11:50:30.275Z"
       },
-      "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\new\\page.tsx"
+      "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\cards\\new\\page.tsx"
     },
     "study": {
       "phase": "do",
@@ -77,9 +86,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T12:25:00.420Z",
-        "lastUpdated": "2026-02-14T13:55:04.912Z"
+        "lastUpdated": "2026-02-15T11:50:51.006Z"
       },
-      "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\study\\page.tsx"
+      "lastFile": "C:\\code\\amgiwang\\src\\components\\study\\vocab-card-view.tsx"
     },
     "study-plan": {
       "phase": "do",
@@ -90,7 +99,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T12:25:23.670Z",
-        "lastUpdated": "2026-02-14T13:25:18.077Z"
+        "lastUpdated": "2026-02-15T08:05:28.931Z"
       },
       "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\study-plan\\page.tsx"
     },
@@ -129,7 +138,7 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T12:56:21.847Z",
-        "lastUpdated": "2026-02-14T13:25:34.155Z"
+        "lastUpdated": "2026-02-15T08:09:54.394Z"
       },
       "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\page.tsx"
     },
@@ -272,7 +281,7 @@
   "session": {
     "startedAt": "2026-02-14T04:12:28.142Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-14T13:55:04.913Z"
+    "lastActivity": "2026-02-15T11:51:24.960Z"
   },
   "history": [
     {
@@ -809,6 +818,90 @@
     {
       "timestamp": "2026-02-14T13:55:04.912Z",
       "feature": "study",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:04:57.245Z",
+      "feature": "study-plan",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:05:28.931Z",
+      "feature": "study-plan",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:09:48.243Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:09:54.394Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:33:52.245Z",
+      "feature": "new",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:33:58.926Z",
+      "feature": "new",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T08:34:11.444Z",
+      "feature": "new",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:49:25.945Z",
+      "feature": "amgiwang",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:50:10.862Z",
+      "feature": "card",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:50:19.433Z",
+      "feature": "new",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:50:30.275Z",
+      "feature": "new",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:50:51.006Z",
+      "feature": "study",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:51:18.103Z",
+      "feature": "amgiwang",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T11:51:24.960Z",
+      "feature": "amgiwang",
       "phase": "do",
       "action": "updated"
     }

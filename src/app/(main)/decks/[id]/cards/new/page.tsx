@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient, supabaseMutate } from "@/lib/supabase/client";
+import { useAuthStore } from "@/stores/auth-store";
 import { queryKeys } from "@/lib/query-keys";
 import { GeneralCardForm } from "@/components/card/general-card-form";
 import { VocabCardForm } from "@/components/card/vocab-card-form";
@@ -12,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import type { Deck } from "@/types/database";
+import type { Deck, VocabMeaning, VocabRelated } from "@/types/database";
 
 export default function NewCardPage({
   params,
@@ -22,6 +23,7 @@ export default function NewCardPage({
   const { id: deckId } = use(params);
   const router = useRouter();
   const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
   const [isSaving, setIsSaving] = useState(false);
   const [cardCount, setCardCount] = useState(0);
 
@@ -38,6 +40,7 @@ export default function NewCardPage({
       setCardCount(data.card_count);
       return data as Pick<Deck, "id" | "deck_type" | "title" | "card_count">;
     },
+    enabled: !!user,
   });
 
   if (isLoading) {
@@ -83,13 +86,18 @@ export default function NewCardPage({
   async function handleVocabSubmit(card: {
     word: string;
     meaning: string;
-    meaning_sub?: string;
+    meanings: VocabMeaning[];
     phonetic?: string;
-    part_of_speech?: string;
     example_sentence?: string;
     example_translation?: string;
-    synonyms?: string[];
-    antonyms?: string[];
+    derivatives?: VocabRelated[];
+    antonyms?: VocabRelated[];
+    root?: string;
+    prefix?: string;
+    suffix?: string;
+    etymology_note?: string;
+    mnemonic?: string;
+    tips?: string;
     tags?: string[];
   }) {
     setIsSaving(true);
@@ -98,13 +106,18 @@ export default function NewCardPage({
         deck_id: deckId,
         word: card.word,
         meaning: card.meaning,
-        meaning_sub: card.meaning_sub || null,
+        meanings: card.meanings,
         phonetic: card.phonetic || null,
-        part_of_speech: card.part_of_speech || null,
         example_sentence: card.example_sentence || null,
         example_translation: card.example_translation || null,
-        synonyms: card.synonyms || [],
+        derivatives: card.derivatives || [],
         antonyms: card.antonyms || [],
+        root: card.root || null,
+        prefix: card.prefix || null,
+        suffix: card.suffix || null,
+        etymology_note: card.etymology_note || null,
+        mnemonic: card.mnemonic || null,
+        tips: card.tips || null,
         tags: card.tags || [],
         position: cardCount + 1,
       });
