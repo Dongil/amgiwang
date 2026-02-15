@@ -1,36 +1,148 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AmgiWang (암기왕)
 
-## Getting Started
+한국 학생을 위한 AI 기반 플래시카드 학습 PWA
 
-First, run the development server:
+## 주요 기능
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Phase 1 - MVP
+
+- **인증**: Supabase Auth (이메일/비밀번호)
+- **덱 관리**: 영어단어 / 일반과목 덱 CRUD
+- **카드 관리**: 영어 단어 카드 (multi-meaning JSONB), 일반 카드 (앞/뒤)
+- **플래시카드 학습**: 카드 넘기기, 정답/오답 평가
+- **SM-2 간격반복**: 복습 주기 자동 계산 (easeFactor, interval, repetitions)
+- **학습 플랜**: 일일 학습량 설정, Day별 진도 관리
+- **대시보드**: 학습 현황, 오늘의 복습 카드, 최근 활동
+
+### Phase 2 - AI & 퀴즈
+
+- **AI 멀티 프로바이더**: Gemini, OpenAI, Claude 3종 지원 (설정에서 선택)
+- **AI 카드 자동 생성**: PDF 업로드 → pdfjs-dist 텍스트 추출 → AI 변환 → 카드 생성
+  - 스마트 페이지 분류 (목차/단어/퀴즈/학습플랜/기타)
+  - Day 단위 배치 처리 (대용량 PDF 대응)
+  - 텍스트 직접 입력 → AI 카드 생성
+- **AI 영어 보강**: 어원 분석 (root/prefix/suffix), 니모닉 연상법 자동 생성
+- **퀴즈 시스템**: 6종 퀴즈 유형
+  - 영어: 영→한 (4지선다), 한→영 (타이핑), 빈칸 채우기, 듣기 (TTS)
+  - 일반: 객관식, O/X
+  - Day별 출제 범위 선택, 경과 타이머, AI 오답 보기 생성
+- **학습 통계 대시보드**: 일별 학습량 차트, 암기율 추이, 퀴즈 정답률, 덱별 진도, 취약 카드 TOP 10
+
+## 기술 스택
+
+| 분류 | 기술 |
+|------|------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| UI | Tailwind CSS v4 + shadcn/ui (Radix) |
+| Backend | Supabase (Auth, PostgreSQL, Storage) |
+| State | Zustand (client) + TanStack React Query (server) |
+| AI | Gemini (`@google/generative-ai`), OpenAI, Claude (`@anthropic-ai/sdk`) |
+| PDF | pdfjs-dist |
+| Charts | Recharts |
+| PWA | next-pwa |
+
+## 프로젝트 구조
+
+```
+src/
+├── app/
+│   ├── (main)/              # 인증 후 메인 레이아웃
+│   │   ├── page.tsx          # 대시보드 (홈)
+│   │   ├── decks/            # 덱 목록/생성
+│   │   │   └── [id]/         # 덱 상세
+│   │   │       ├── cards/new/ # 카드 추가
+│   │   │       ├── edit/      # 덱 편집
+│   │   │       ├── study/     # 플래시카드 학습
+│   │   │       ├── study-plan/# 학습 플랜
+│   │   │       ├── quiz/      # 퀴즈
+│   │   │       └── upload-pdf/# PDF 업로드
+│   │   ├── stats/            # 학습 통계
+│   │   └── settings/         # 설정
+│   │       └── ai/           # AI 프로바이더 설정
+│   ├── api/
+│   │   ├── ai/               # AI API Routes
+│   │   │   ├── validate-key/  # API 키 검증
+│   │   │   ├── generate-vocab/# 단어 카드 생성
+│   │   │   ├── generate-cards/# 일반 카드 생성
+│   │   │   ├── generate-etymology/ # 어원 분석
+│   │   │   ├── generate-mnemonic/  # 니모닉 생성
+│   │   │   └── generate-quiz/ # 퀴즈 보기 생성
+│   │   └── pdf/parse/        # PDF 파싱
+│   ├── login/                # 로그인
+│   └── signup/               # 회원가입
+├── components/
+│   ├── card/                 # 카드 관련 (vocab-card-form 등)
+│   ├── quiz/                 # 퀴즈 (session, question, result)
+│   ├── pdf/                  # PDF (uploader, card-preview, text-generator)
+│   ├── stats/                # 통계 (study-chart, weak-cards)
+│   ├── study/                # 학습 (flashcard, vocab-card-view)
+│   └── ui/                   # shadcn/ui 컴포넌트
+├── hooks/                    # 커스텀 훅 (use-quiz, use-vocab-cards 등)
+├── lib/
+│   ├── ai/                   # AI 클라이언트 (provider, prompts, get-ai-client)
+│   ├── supabase/             # Supabase 클라이언트 (client, server)
+│   └── sm2.ts                # SM-2 간격반복 알고리즘
+├── stores/                   # Zustand 스토어 (auth, study)
+└── types/
+    └── database.ts           # TypeScript 인터페이스 (18개)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 데이터베이스 (Supabase)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| 테이블 | 설명 |
+|--------|------|
+| profiles | 사용자 프로필 + AI 설정 |
+| decks | 덱 (영어단어/일반) |
+| vocab_cards | 영어 단어 카드 (meanings JSONB) |
+| cards | 일반 카드 (앞/뒤) |
+| study_records | SM-2 학습 기록 |
+| study_plans | 학습 플랜 |
+| quiz_results | 퀴즈 결과 |
+| pdf_uploads | PDF 업로드 기록 |
+| badges | 배지 정의 |
+| user_badges | 사용자 배지 획득 |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 시작하기
 
-## Learn More
+### 요구사항
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js 18+
+- Supabase 프로젝트 (Auth + PostgreSQL + Storage)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 설치
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git clone https://github.com/Dongil/amgiwang.git
+cd amgiwang
+npm install
+```
 
-## Deploy on Vercel
+### 환경 변수
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`.env.local` 파일 생성:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+### 실행
+
+```bash
+npm run dev       # 개발 서버 (http://localhost:3000)
+npm run build     # 프로덕션 빌드
+npm run start     # 프로덕션 서버
+```
+
+## 개발 이력
+
+| Phase | 기능 | Match Rate | 커밋 |
+|-------|------|:----------:|------|
+| MVP | 인증, 덱/카드 CRUD, 플래시카드, SM-2, 대시보드 | 92% | `a42a85d` |
+| Vocab Redesign | Multi-meaning JSONB 구조 | 100% | `4be11fe` |
+| **Phase 2** | **AI 멀티 프로바이더, 퀴즈 6종, 통계 대시보드** | **99%** | **`ced7c86`** |
+
+## 라이선스
+
+Private
