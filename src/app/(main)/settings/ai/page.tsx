@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, Loader2, ShieldCheck, ShieldX } from "lucide-react";
 import { toast } from "sonner";
 import type { AIProvider } from "@/types/database";
 
@@ -21,9 +21,42 @@ const PROVIDERS: { id: AIProvider; name: string; description: string }[] = [
 export default function AISettingsPage() {
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
+  const setProfile = useAuthStore((s) => s.setProfile);
   const [provider, setProvider] = useState<AIProvider>(profile?.ai_provider ?? "gemini");
   const [apiKey, setApiKey] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<"valid" | "invalid" | null>(null);
+
+  async function handleValidate() {
+    const keyToTest = apiKey.trim() || profile?.ai_api_key_encrypted;
+    if (!keyToTest) {
+      toast.error("API 키를 입력해주세요.");
+      return;
+    }
+    setIsValidating(true);
+    setValidationResult(null);
+    try {
+      const res = await fetch("/api/ai/validate-key", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ provider, apiKey: apiKey.trim() || profile?.ai_api_key_encrypted }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setValidationResult("valid");
+        toast.success("API 키가 유효합니다!");
+      } else {
+        setValidationResult("invalid");
+        toast.error(data.error || "API 키가 유효하지 않습니다.");
+      }
+    } catch {
+      setValidationResult("invalid");
+      toast.error("검증 중 오류가 발생했습니다.");
+    } finally {
+      setIsValidating(false);
+    }
+  }
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -38,6 +71,13 @@ export default function AISettingsPage() {
         filter: `id=eq.${user.id}`,
       });
       if (error) throw new Error(error);
+      if (profile) {
+        setProfile({
+          ...profile,
+          ai_provider: provider,
+          ...(apiKey.trim() && { ai_api_key_encrypted: apiKey.trim() }),
+        });
+      }
       toast.success("AI 설정이 저장되었습니다!");
     } catch (err) {
       toast.error(`저장 실패: ${err instanceof Error ? err.message : String(err)}`);
@@ -65,7 +105,10 @@ export default function AISettingsPage() {
               <button
                 key={p.id}
                 type="button"
-                onClick={() => setProvider(p.id)}
+                onClick={() => {
+                  setProvider(p.id);
+                  setValidationResult(null);
+                }}
                 className={`rounded-lg border-2 p-3 text-center transition-colors ${
                   provider === p.id
                     ? "border-primary bg-primary/5"
@@ -86,13 +129,37 @@ export default function AISettingsPage() {
 
         <div className="space-y-2">
           <Label htmlFor="apiKey">API 키</Label>
-          <Input
-            id="apiKey"
-            type="password"
-            placeholder={profile?.ai_api_key_encrypted ? "●●●●●●●● (설정됨)" : "API 키를 입력하세요"}
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-          />
+          <div className="flex gap-2">
+            <Input
+              id="apiKey"
+              type="password"
+              placeholder={profile?.ai_api_key_encrypted ? "●●●●●●●● (설정됨)" : "API 키를 입력하세요"}
+              value={apiKey}
+              onChange={(e) => {
+                setApiKey(e.target.value);
+                setValidationResult(null);
+              }}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleValidate}
+              disabled={isValidating}
+              className="shrink-0"
+            >
+              {isValidating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : validationResult === "valid" ? (
+                <ShieldCheck className="h-4 w-4 text-green-500" />
+              ) : validationResult === "invalid" ? (
+                <ShieldX className="h-4 w-4 text-red-500" />
+              ) : (
+                "검증"
+              )}
+            </Button>
+          </div>
           <p className="text-xs text-muted-foreground">
             API 키는 암호화되어 안전하게 저장됩니다.
           </p>

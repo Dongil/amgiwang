@@ -1,15 +1,26 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useMemo } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { queryKeys } from "@/lib/query-keys";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, FileText, Upload } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, FileText, Type } from "lucide-react";
+import { PdfUploader } from "@/components/pdf/pdf-uploader";
+import { PdfCardPreview } from "@/components/pdf/pdf-card-preview";
+import { TextCardGenerator } from "@/components/pdf/text-card-generator";
 import type { Deck } from "@/types/database";
+
+interface ClassifiedPage {
+  pageNum: number;
+  text: string;
+  type: "toc" | "vocab" | "quiz" | "plan" | "other";
+  dayNumber?: number;
+}
 
 export default function UploadPdfPage({
   params,
@@ -17,6 +28,13 @@ export default function UploadPdfPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: deckId } = use(params);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [parsedResult, setParsedResult] = useState<{
+    totalPages: number;
+    pages: ClassifiedPage[];
+    fileUrl: string;
+  } | null>(null);
 
   const { data: deck, isLoading } = useQuery({
     queryKey: [...queryKeys.decks.detail(deckId), "pdf"],
@@ -24,13 +42,53 @@ export default function UploadPdfPage({
       const supabase = createClient();
       const { data, error } = await supabase
         .from("decks")
-        .select("id, title, deck_type")
+        .select("id, title, deck_type, subject")
         .eq("id", deckId)
         .single();
       if (error) throw error;
-      return data as Pick<Deck, "id" | "title" | "deck_type">;
+      return data as Pick<Deck, "id" | "title" | "deck_type" | "subject">;
     },
   });
+
+  // PDF 분석 결과에서 Day 그룹 생성
+  const dayGroups = useMemo(() => {
+    if (!parsedResult) return [];
+    const vocabPages = parsedResult.pages.filter((p) => p.type === "vocab");
+    const grouped = new Map<number, { pageNums: number[]; texts: string[] }>();
+
+    for (const page of vocabPages) {
+      const day = page.dayNumber || 0;
+      const existing = grouped.get(day) || { pageNums: [], texts: [] };
+      existing.pageNums.push(page.pageNum);
+      existing.texts.push(page.text);
+      grouped.set(day, existing);
+    }
+
+    return Array.from(grouped.entries())
+      .map(([dayNumber, { pageNums, texts }]) => ({
+        dayNumber,
+        pageNums,
+        text: texts.join("\n\n"),
+      }))
+      .sort((a, b) => a.dayNumber - b.dayNumber);
+  }, [parsedResult]);
+
+  function handleComplete(count: number) {
+    queryClient.invalidateQueries({ queryKey: queryKeys.decks.all });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.decks.detail(deckId),
+    });
+    if (deck?.deck_type === "english_vocab") {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.vocabCards.list(deckId),
+      });
+    } else {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.cards.list(deckId),
+      });
+    }
+    router.push(`/decks/${deckId}`);
+  }
 
   if (isLoading) {
     return (
@@ -50,46 +108,70 @@ export default function UploadPdfPage({
           </Link>
         </Button>
         <div>
-          <h1 className="text-lg font-bold">PDF 업로드</h1>
+          <h1 className="text-lg font-bold">카드 생성</h1>
           <p className="text-xs text-muted-foreground">{deck?.title}</p>
         </div>
       </div>
 
-      <Card>
-        <CardContent className="flex flex-col items-center gap-4 p-8">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-            <FileText className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <div className="text-center">
-            <p className="font-medium">PDF 업로드 기능</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              PDF를 업로드하면 AI가 내용을 분석해서
-              {deck?.deck_type === "english_vocab" ? " 단어를 " : " 카드를 "}
-              자동 생성합니다.
-            </p>
-          </div>
+      <Tabs defaultValue="pdf">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="pdf">
+            <FileText className="mr-1 h-3 w-3" />
+            PDF 업로드
+          </TabsTrigger>
+          <TabsTrigger value="text">
+            <Type className="mr-1 h-3 w-3" />
+            텍스트 입력
+          </TabsTrigger>
+        </TabsList>
 
-          <div className="w-full rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 text-center">
-            <Upload className="mx-auto h-8 w-8 text-muted-foreground/50" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              PDF 파일을 끌어 놓거나 클릭하세요
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              AI 설정이 필요합니다
-            </p>
-          </div>
+        <TabsContent value="pdf" className="mt-4 space-y-4">
+          {!parsedResult ? (
+            <PdfUploader
+              deckId={deckId}
+              deckType={deck?.deck_type || "general"}
+              onParsed={setParsedResult}
+            />
+          ) : dayGroups.length > 0 ? (
+            <PdfCardPreview
+              deckId={deckId}
+              deckType={deck?.deck_type || "general"}
+              dayGroups={dayGroups}
+              onComplete={handleComplete}
+            />
+          ) : (
+            <div className="text-center text-sm text-muted-foreground">
+              <p>단어 페이지를 찾지 못했습니다.</p>
+              <p className="mt-1">다른 PDF를 시도해보세요.</p>
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => setParsedResult(null)}
+              >
+                다시 업로드
+              </Button>
+            </div>
+          )}
 
-          <Button asChild variant="outline" size="sm">
-            <Link href="/settings/ai">AI 설정하기</Link>
-          </Button>
-        </CardContent>
-      </Card>
+          {parsedResult && (
+            <div className="text-center text-xs text-muted-foreground">
+              총 {parsedResult.totalPages}페이지 ·{" "}
+              {parsedResult.pages.filter((p) => p.type === "vocab").length}개 단어 페이지 ·{" "}
+              {dayGroups.length}개 Day
+            </div>
+          )}
+        </TabsContent>
 
-      <div className="mt-4 text-center">
-        <Button asChild variant="ghost" size="sm">
-          <Link href={`/decks/${deckId}/cards/new`}>직접 입력하기</Link>
-        </Button>
-      </div>
+        <TabsContent value="text" className="mt-4">
+          <TextCardGenerator
+            deckId={deckId}
+            deckType={deck?.deck_type || "general"}
+            subject={deck?.subject || ""}
+            onComplete={handleComplete}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

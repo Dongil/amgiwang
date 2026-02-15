@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 import type { VocabMeaning, VocabRelated } from "@/types/database";
 
 interface VocabCardData {
@@ -67,6 +69,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
   const [mnemonic, setMnemonic] = useState(initialData?.mnemonic ?? "");
   const [tips, setTips] = useState(initialData?.tips ?? "");
   const [tagsInput, setTagsInput] = useState(initialData?.tags?.join(", ") ?? "");
+  const [aiLoading, setAiLoading] = useState<"etymology" | "mnemonic" | "all" | null>(null);
 
   function addMeaning() {
     setMeanings([...meanings, { pos: "", meaning: "", synonyms: [] }]);
@@ -79,6 +82,126 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
 
   function updateMeaning(index: number, field: keyof VocabMeaning, value: string | string[]) {
     setMeanings(meanings.map((m, i) => (i === index ? { ...m, [field]: value } : m)));
+  }
+
+  async function handleAIEtymology() {
+    if (!word.trim()) {
+      toast.error("단어를 먼저 입력해주세요.");
+      return;
+    }
+    setAiLoading("etymology");
+    try {
+      const res = await fetch("/api/ai/generate-etymology", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ word: word.trim() }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "어원 분석 실패");
+      }
+      const data = await res.json();
+      if (data.root) setRoot(data.root);
+      if (data.prefix) setPrefix(data.prefix);
+      if (data.suffix) setSuffix(data.suffix);
+      if (data.etymology_note) setEtymologyNote(data.etymology_note);
+      toast.success("어원 분석 완료!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "어원 분석 실패");
+    } finally {
+      setAiLoading(null);
+    }
+  }
+
+  async function handleAIMnemonic() {
+    if (!word.trim() || !meanings[0]?.meaning) {
+      toast.error("단어와 뜻을 먼저 입력해주세요.");
+      return;
+    }
+    setAiLoading("mnemonic");
+    try {
+      const res = await fetch("/api/ai/generate-mnemonic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ word: word.trim(), meaning: meanings[0].meaning }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "니모닉 생성 실패");
+      }
+      const data = await res.json();
+      if (data.mnemonic) setMnemonic(data.mnemonic);
+      toast.success("연상법 생성 완료!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "니모닉 생성 실패");
+    } finally {
+      setAiLoading(null);
+    }
+  }
+
+  async function handleAIAutoFill() {
+    if (!word.trim()) {
+      toast.error("단어를 먼저 입력해주세요.");
+      return;
+    }
+    setAiLoading("all");
+    try {
+      // 어원 + 니모닉 병렬 호출
+      const [etymRes, vocabRes] = await Promise.all([
+        fetch("/api/ai/generate-etymology", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ word: word.trim() }),
+        }),
+        fetch("/api/ai/generate-vocab", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: word.trim(), mode: "text" }),
+        }),
+      ]);
+
+      if (etymRes.ok) {
+        const etymData = await etymRes.json();
+        if (etymData.root) setRoot(etymData.root);
+        if (etymData.prefix) setPrefix(etymData.prefix);
+        if (etymData.suffix) setSuffix(etymData.suffix);
+        if (etymData.etymology_note) setEtymologyNote(etymData.etymology_note);
+      }
+
+      if (vocabRes.ok) {
+        const vocabData = await vocabRes.json();
+        const card = vocabData.cards?.[0];
+        if (card) {
+          if (card.phonetic && !phonetic) setPhonetic(card.phonetic);
+          if (card.meanings?.length && !meanings[0]?.meaning) setMeanings(card.meanings);
+          if (card.example_sentence && !exampleSentence) setExampleSentence(card.example_sentence);
+          if (card.example_translation && !exampleTranslation) setExampleTranslation(card.example_translation);
+          if (card.derivatives?.length && !derivativesInput) setDerivativesInput(relatedToString(card.derivatives));
+          if (card.antonyms?.length && !antonymsInput) setAntonymsInput(relatedToString(card.antonyms));
+          if (card.tips && !tips) setTips(card.tips);
+        }
+      }
+
+      // 니모닉은 뜻이 있어야 생성 가능
+      const currentMeaning = meanings[0]?.meaning;
+      if (currentMeaning && !mnemonic) {
+        const mnemoRes = await fetch("/api/ai/generate-mnemonic", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ word: word.trim(), meaning: currentMeaning }),
+        });
+        if (mnemoRes.ok) {
+          const mnemoData = await mnemoRes.json();
+          if (mnemoData.mnemonic) setMnemonic(mnemoData.mnemonic);
+        }
+      }
+
+      toast.success("AI 자동 채우기 완료!");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "AI 자동 채우기 실패");
+    } finally {
+      setAiLoading(null);
+    }
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -121,6 +244,27 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* AI 자동 채우기 버튼 */}
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={handleAIAutoFill}
+        disabled={!word.trim() || aiLoading !== null}
+      >
+        {aiLoading === "all" ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            AI 분석 중...
+          </>
+        ) : (
+          <>
+            <Sparkles className="mr-2 h-4 w-4" />
+            AI 자동 채우기
+          </>
+        )}
+      </Button>
+
       {/* 영단어 + 발음기호 */}
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
@@ -239,6 +383,23 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
       </div>
 
       {/* 어원 */}
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">어원 분석</span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={handleAIEtymology}
+          disabled={!word.trim() || aiLoading !== null}
+        >
+          {aiLoading === "etymology" ? (
+            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+          ) : (
+            <Sparkles className="mr-1 h-3 w-3" />
+          )}
+          AI 어원
+        </Button>
+      </div>
       <div className="grid grid-cols-3 gap-3">
         <div className="space-y-2">
           <Label htmlFor="prefix">접두사</Label>
@@ -280,15 +441,29 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
       </div>
 
       {/* 연상법 */}
-      <div className="space-y-2">
+      <div className="flex items-center justify-between">
         <Label htmlFor="mnemonic">연상법 (암기 힌트)</Label>
-        <Input
-          id="mnemonic"
-          placeholder="리가드 → 리 가드 → ..."
-          value={mnemonic}
-          onChange={(e) => setMnemonic(e.target.value)}
-        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={handleAIMnemonic}
+          disabled={!word.trim() || !meanings[0]?.meaning || aiLoading !== null}
+        >
+          {aiLoading === "mnemonic" ? (
+            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+          ) : (
+            <Sparkles className="mr-1 h-3 w-3" />
+          )}
+          AI 연상법
+        </Button>
       </div>
+      <Input
+        id="mnemonic"
+        placeholder="리가드 → 리 가드 → ..."
+        value={mnemonic}
+        onChange={(e) => setMnemonic(e.target.value)}
+      />
 
       {/* Tips */}
       <div className="space-y-2">

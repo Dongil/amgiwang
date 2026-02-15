@@ -42,3 +42,22 @@
 | Design | `vocab-card-redesign.design.md` |
 | Analysis | `vocab-card-redesign.analysis.md` |
 | Report | `vocab-card-redesign.report.md` |
+
+---
+
+## phase2
+
+| Field | Value |
+|-------|-------|
+| **Feature** | Phase 2 - AI & Quiz System |
+| **Archived** | 2026-02-15 |
+| **Match Rate** | 99% |
+| **Iterations** | 3 |
+| **Phase** | Completed |
+
+### Documents
+
+| Document | File |
+|----------|------|
+| Analysis | `phase2.analysis.md` |
+| Report | `phase2.report.md` |
