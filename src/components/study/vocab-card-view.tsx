@@ -118,7 +118,7 @@ export function VocabCardView({
 
       {/* 7. Tips */}
       {card.tips && (
-        <div className="rounded-lg bg-amber-50 p-2 text-sm dark:bg-amber-950/30">
+        <div className="whitespace-pre-line rounded-lg bg-amber-50 p-2 text-sm dark:bg-amber-950/30">
           <span className="font-medium">Tips: </span>
           {card.tips}
         </div>

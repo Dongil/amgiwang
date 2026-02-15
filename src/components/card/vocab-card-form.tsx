@@ -293,11 +293,12 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
       {/* Tips */}
       <div className="space-y-2">
         <Label htmlFor="tips">Tips (시험 패턴)</Label>
-        <Input
+        <Textarea
           id="tips"
-          placeholder="with regard to ~에 관해서 / regard A as B"
+          placeholder="with regard to ~에 관해서&#10;regard A as B"
           value={tips}
           onChange={(e) => setTips(e.target.value)}
+          rows={2}
         />
       </div>
 
