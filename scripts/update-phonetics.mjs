@@ -5,9 +5,9 @@
 import { createClient } from "@supabase/supabase-js";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const SUPABASE_URL = "https://qcnsjfnzvdnjbfushnss.supabase.co";
-const SERVICE_ROLE_KEY = "***REMOVED_SERVICE_ROLE_KEY***";
-const GEMINI_API_KEY = "***REMOVED_GEMINI_KEY***";
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const DECK_ID = "0c27434b-9920-4c8d-bf26-92e13ef8ad51";
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
