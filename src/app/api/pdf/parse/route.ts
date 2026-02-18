@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { extractText } from "unpdf";
 
 export async function POST(request: Request) {
   try {
@@ -21,26 +22,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "PDF 파일만 지원합니다." }, { status: 400 });
     }
 
-    // PDF 텍스트 추출 (pdfjs-dist)
+    // PDF 텍스트 추출 (unpdf - 서버사이드 호환)
     const arrayBuffer = await file.arrayBuffer();
-    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const { totalPages, text: pageTexts } = await extractText(
+      new Uint8Array(arrayBuffer),
+      { mergePages: false }
+    );
 
-    const pdf = await pdfjs.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
-    const totalPages = pdf.numPages;
-
-    const pages: { pageNum: number; text: string }[] = [];
-
-    for (let i = 1; i <= totalPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const text = textContent.items
-        .map((item: unknown) => {
-          const textItem = item as { str?: string };
-          return textItem.str ?? "";
-        })
-        .join(" ");
-      pages.push({ pageNum: i, text });
-    }
+    const pages = pageTexts.map((text, i) => ({
+      pageNum: i + 1,
+      text,
+    }));
 
     // 페이지 분류
     const classified = classifyPages(pages);

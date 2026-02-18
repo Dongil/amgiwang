@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAIClient } from "@/lib/ai/get-ai-client";
 import { generalCardsFromTextPrompt } from "@/lib/ai/prompts";
+import { safeJsonParse } from "@/lib/ai/json-repair";
 
 export async function POST(request: Request) {
   try {
@@ -23,11 +24,18 @@ export async function POST(request: Request) {
     const result = await aiResult.client.generate({
       messages,
       temperature: 0.3,
-      maxTokens: 8192,
+      maxTokens: 16384,
       jsonMode: true,
     });
 
-    const parsed = JSON.parse(result);
+    if (!result?.trim()) {
+      return NextResponse.json(
+        { error: "AI 응답이 비어있습니다. 다시 시도해주세요." },
+        { status: 502 }
+      );
+    }
+
+    const parsed = safeJsonParse(result);
     return NextResponse.json(parsed);
   } catch (err) {
     console.error("generate-cards error:", err);

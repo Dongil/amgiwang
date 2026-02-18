@@ -4,57 +4,97 @@ import { useState } from "react";
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 import { supabaseMutate } from "@/lib/supabase/client";
+import { PROVIDER_MODELS, getDefaultModel } from "@/lib/ai/provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Check, Loader2, ShieldCheck, ShieldX } from "lucide-react";
 import { toast } from "sonner";
-import type { AIProvider } from "@/types/database";
+import type { AIProvider, AISettings } from "@/types/database";
 
-const PROVIDERS: { id: AIProvider; name: string; description: string }[] = [
-  { id: "gemini", name: "Gemini", description: "Google AI, 무료 티어 넉넉" },
-  { id: "openai", name: "OpenAI", description: "GPT-4o-mini, 가성비" },
-  { id: "claude", name: "Claude", description: "심층 분석에 강점" },
+const PROVIDERS: { id: AIProvider; name: string; color: string }[] = [
+  { id: "gemini", name: "Gemini", color: "text-blue-500" },
+  { id: "openai", name: "OpenAI", color: "text-green-500" },
+  { id: "claude", name: "Claude", color: "text-orange-500" },
 ];
 
 export default function AISettingsPage() {
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
   const setProfile = useAuthStore((s) => s.setProfile);
-  const [provider, setProvider] = useState<AIProvider>(profile?.ai_provider ?? "gemini");
-  const [apiKey, setApiKey] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<"valid" | "invalid" | null>(null);
 
-  async function handleValidate() {
-    const keyToTest = apiKey.trim() || profile?.ai_api_key_encrypted;
+  const savedSettings: AISettings = profile?.ai_settings ?? {};
+
+  const [defaultProvider, setDefaultProvider] = useState<AIProvider>(
+    profile?.ai_provider ?? "gemini"
+  );
+
+  // 프로바이더별 입력 상태
+  const [keys, setKeys] = useState<Record<AIProvider, string>>({
+    gemini: "",
+    openai: "",
+    claude: "",
+  });
+  const [models, setModels] = useState<Record<AIProvider, string>>({
+    gemini: savedSettings.gemini?.model || getDefaultModel("gemini"),
+    openai: savedSettings.openai?.model || getDefaultModel("openai"),
+    claude: savedSettings.claude?.model || getDefaultModel("claude"),
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [validating, setValidating] = useState<AIProvider | null>(null);
+  const [validationResults, setValidationResults] = useState<
+    Record<string, "valid" | "invalid">
+  >({});
+
+  function hasKey(p: AIProvider): boolean {
+    return !!keys[p].trim() || !!savedSettings[p]?.apiKey;
+  }
+
+  async function handleValidate(p: AIProvider) {
+    const keyToTest = keys[p].trim() || savedSettings[p]?.apiKey;
     if (!keyToTest) {
       toast.error("API 키를 입력해주세요.");
       return;
     }
-    setIsValidating(true);
-    setValidationResult(null);
+    setValidating(p);
+    setValidationResults((prev) => {
+      const next = { ...prev };
+      delete next[p];
+      return next;
+    });
+
     try {
       const res = await fetch("/api/ai/validate-key", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ provider, apiKey: apiKey.trim() || profile?.ai_api_key_encrypted }),
+        body: JSON.stringify({ provider: p, apiKey: keyToTest, model: models[p] }),
       });
       const data = await res.json();
       if (data.valid) {
-        setValidationResult("valid");
-        toast.success("API 키가 유효합니다!");
+        setValidationResults((prev) => ({ ...prev, [p]: "valid" }));
+        if (data.warning) {
+          toast.warning(`${p}: ${data.warning}`);
+        } else {
+          toast.success(`${p} API 키가 유효합니다!`);
+        }
       } else {
-        setValidationResult("invalid");
+        setValidationResults((prev) => ({ ...prev, [p]: "invalid" }));
         toast.error(data.error || "API 키가 유효하지 않습니다.");
       }
     } catch {
-      setValidationResult("invalid");
+      setValidationResults((prev) => ({ ...prev, [p]: "invalid" }));
       toast.error("검증 중 오류가 발생했습니다.");
     } finally {
-      setIsValidating(false);
+      setValidating(null);
     }
   }
 
@@ -63,21 +103,36 @@ export default function AISettingsPage() {
     if (!user) return;
     setIsSaving(true);
     try {
-      const updateData: Record<string, unknown> = { ai_provider: provider };
-      if (apiKey.trim()) {
-        updateData.ai_api_key_encrypted = apiKey.trim();
+      // 기존 설정에 새 입력값 머지
+      const newSettings: AISettings = { ...savedSettings };
+      for (const p of PROVIDERS) {
+        const pid = p.id;
+        const newKey = keys[pid].trim();
+        if (newKey || newSettings[pid]) {
+          newSettings[pid] = {
+            apiKey: newKey || savedSettings[pid]?.apiKey || "",
+            model: models[pid],
+          };
+        }
       }
-      const { error } = await supabaseMutate("profiles", "PATCH", updateData, {
+
+      const { error } = await supabaseMutate("profiles", "PATCH", {
+        ai_provider: defaultProvider,
+        ai_settings: newSettings,
+      }, {
         filter: `id=eq.${user.id}`,
       });
       if (error) throw new Error(error);
+
       if (profile) {
         setProfile({
           ...profile,
-          ai_provider: provider,
-          ...(apiKey.trim() && { ai_api_key_encrypted: apiKey.trim() }),
+          ai_provider: defaultProvider,
+          ai_settings: newSettings,
         });
       }
+      // 입력 필드 초기화 (저장 완료)
+      setKeys({ gemini: "", openai: "", claude: "" });
       toast.success("AI 설정이 저장되었습니다!");
     } catch (err) {
       toast.error(`저장 실패: ${err instanceof Error ? err.message : String(err)}`);
@@ -97,86 +152,120 @@ export default function AISettingsPage() {
         <h1 className="text-lg font-bold">AI 설정</h1>
       </div>
 
-      <form onSubmit={handleSave} className="space-y-6">
-        <div className="space-y-3">
-          <Label>AI 프로바이더</Label>
+      <form onSubmit={handleSave} className="space-y-5">
+        {/* 기본 프로바이더 선택 */}
+        <div className="space-y-2">
+          <Label>기본 AI 프로바이더</Label>
           <div className="grid grid-cols-3 gap-2">
             {PROVIDERS.map((p) => (
               <button
                 key={p.id}
                 type="button"
-                onClick={() => {
-                  setProvider(p.id);
-                  setValidationResult(null);
-                }}
-                className={`rounded-lg border-2 p-3 text-center transition-colors ${
-                  provider === p.id
+                onClick={() => setDefaultProvider(p.id)}
+                className={`rounded-lg border-2 p-2.5 text-center transition-colors ${
+                  defaultProvider === p.id
                     ? "border-primary bg-primary/5"
                     : "border-border hover:border-primary/50"
                 }`}
               >
                 <p className="text-sm font-medium">{p.name}</p>
-                {provider === p.id && (
-                  <Check className="mx-auto mt-1 h-3 w-3 text-primary" />
+                {defaultProvider === p.id && (
+                  <Check className="mx-auto mt-0.5 h-3 w-3 text-primary" />
                 )}
               </button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            {PROVIDERS.find((p) => p.id === provider)?.description}
+            PDF 카드 생성, 퀴즈 등에서 기본으로 사용할 AI
           </p>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="apiKey">API 키</Label>
-          <div className="flex gap-2">
-            <Input
-              id="apiKey"
-              type="password"
-              placeholder={profile?.ai_api_key_encrypted ? "●●●●●●●● (설정됨)" : "API 키를 입력하세요"}
-              value={apiKey}
-              onChange={(e) => {
-                setApiKey(e.target.value);
-                setValidationResult(null);
-              }}
-              className="flex-1"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleValidate}
-              disabled={isValidating}
-              className="shrink-0"
-            >
-              {isValidating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : validationResult === "valid" ? (
-                <ShieldCheck className="h-4 w-4 text-green-500" />
-              ) : validationResult === "invalid" ? (
-                <ShieldX className="h-4 w-4 text-red-500" />
-              ) : (
-                "검증"
-              )}
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            API 키는 암호화되어 안전하게 저장됩니다.
-          </p>
-        </div>
+        {/* 프로바이더별 설정 */}
+        {PROVIDERS.map((p) => {
+          const hasSavedKey = !!savedSettings[p.id]?.apiKey;
+          const vResult = validationResults[p.id];
+          return (
+            <Card key={p.id}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm">
+                  <span className={p.color}>{p.name}</span>
+                  {hasSavedKey && (
+                    <span className="rounded bg-green-500/10 px-1.5 py-0.5 text-[10px] font-normal text-green-600">
+                      키 등록됨
+                    </span>
+                  )}
+                  {defaultProvider === p.id && (
+                    <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-normal text-primary">
+                      기본
+                    </span>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {/* API 키 */}
+                <div className="space-y-1">
+                  <Label className="text-xs">API 키</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="password"
+                      placeholder={hasSavedKey ? "●●●●●●●● (변경하려면 새 키 입력)" : "API 키를 입력하세요"}
+                      value={keys[p.id]}
+                      onChange={(e) => {
+                        setKeys((prev) => ({ ...prev, [p.id]: e.target.value }));
+                        setValidationResults((prev) => {
+                          const next = { ...prev };
+                          delete next[p.id];
+                          return next;
+                        });
+                      }}
+                      className="flex-1 text-sm"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleValidate(p.id)}
+                      disabled={validating === p.id || !hasKey(p.id)}
+                      className="shrink-0"
+                    >
+                      {validating === p.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : vResult === "valid" ? (
+                        <ShieldCheck className="h-4 w-4 text-green-500" />
+                      ) : vResult === "invalid" ? (
+                        <ShieldX className="h-4 w-4 text-red-500" />
+                      ) : (
+                        "검증"
+                      )}
+                    </Button>
+                  </div>
+                </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">AI 기능 안내</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm text-muted-foreground">
-            <p>- 카드 자동 생성 (PDF/텍스트)</p>
-            <p>- 퀴즈 문제 생성</p>
-            <p>- 어원 분석 & 니모닉</p>
-            <p>- 오답 분석</p>
-            <p>- AI 심층 질문</p>
-          </CardContent>
-        </Card>
+                {/* 모델 선택 */}
+                <div className="space-y-1">
+                  <Label className="text-xs">모델</Label>
+                  <Select
+                    value={models[p.id]}
+                    onValueChange={(v) =>
+                      setModels((prev) => ({ ...prev, [p.id]: v }))
+                    }
+                  >
+                    <SelectTrigger className="text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PROVIDER_MODELS[p.id].map((m) => (
+                        <SelectItem key={m.id} value={m.id}>
+                          {m.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
 
         <Button type="submit" className="w-full" disabled={isSaving}>
           {isSaving ? "저장 중..." : "저장"}

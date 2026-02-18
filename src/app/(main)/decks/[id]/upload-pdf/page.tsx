@@ -54,14 +54,20 @@ export default function UploadPdfPage({
   const dayGroups = useMemo(() => {
     if (!parsedResult) return [];
     const vocabPages = parsedResult.pages.filter((p) => p.type === "vocab");
-    const grouped = new Map<number, { pageNums: number[]; texts: string[] }>();
 
-    for (const page of vocabPages) {
-      const day = page.dayNumber || 0;
-      const existing = grouped.get(day) || { pageNums: [], texts: [] };
+    // Day 번호 없는 페이지는 직전 페이지의 Day를 상속
+    let lastDay = 1;
+    const pagesWithDay = vocabPages.map((page) => {
+      if (page.dayNumber) lastDay = page.dayNumber;
+      return { ...page, dayNumber: page.dayNumber || lastDay };
+    });
+
+    const grouped = new Map<number, { pageNums: number[]; texts: string[] }>();
+    for (const page of pagesWithDay) {
+      const existing = grouped.get(page.dayNumber) || { pageNums: [], texts: [] };
       existing.pageNums.push(page.pageNum);
       existing.texts.push(page.text);
-      grouped.set(day, existing);
+      grouped.set(page.dayNumber, existing);
     }
 
     return Array.from(grouped.entries())
