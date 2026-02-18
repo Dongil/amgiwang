@@ -28,6 +28,25 @@
   - Day별 출제 범위 선택, 경과 타이머, AI 오답 보기 생성
 - **학습 통계 대시보드**: 일별 학습량 차트, 암기율 추이, 퀴즈 정답률, 덱별 진도, 취약 카드 TOP 10
 
+### Phase 3 - 카드 리스트 & 학습 네비게이션
+
+- **덱 카드 리스트 테이블**: 덱 상세 페이지 하단에 전체 카드 테이블 표시
+  - 서버사이드 페이지네이션 (50장/페이지, Supabase `.range()`)
+  - Day 필터 드롭다운 (Day 1~50)
+  - 단어 검색 (debounce 300ms)
+  - 행 클릭 → Sheet 모달로 카드 편집 (VocabCardForm 재활용)
+  - 행 ⋯ 메뉴 → 수정/삭제/여기 앞에 추가 (카드 삽입)
+  - 삭제 확인 Dialog, 모바일 반응형 (컬럼 축소)
+- **학습 네비게이션**: 학습 페이지 상단 네비게이션 바
+  - Day 드롭다운 → 해당 Day 카드만 학습
+  - 카드 번호 클릭 → 번호 입력 다이얼로그 → 직접 점프
+  - 단어 검색 → 해당 카드로 이동
+  - `?day=N` URL 파라미터 지원 (딥링크)
+  - Progress 바, 좌우 화살표 네비게이션
+- **카드 삽입 기능**: PDF 자동 인식 누락 단어를 원하는 위치에 삽입
+  - PostgreSQL RPC `shift_vocab_positions` (position 시프트)
+- **UX 개선**: 편집 모드 placeholder "(입력 없음)" 표시, 카드 수정 저장 버그 수정
+
 ## 기술 스택
 
 | 분류 | 기술 |
@@ -73,12 +92,13 @@ src/
 │   └── signup/               # 회원가입
 ├── components/
 │   ├── card/                 # 카드 관련 (vocab-card-form 등)
+│   ├── deck/                 # 덱 관련 (card-list-table, card-edit-sheet)
 │   ├── quiz/                 # 퀴즈 (session, question, result)
 │   ├── pdf/                  # PDF (uploader, card-preview, text-generator)
 │   ├── stats/                # 통계 (study-chart, weak-cards)
-│   ├── study/                # 학습 (flashcard, vocab-card-view)
+│   ├── study/                # 학습 (vocab-card-view, study-nav)
 │   └── ui/                   # shadcn/ui 컴포넌트
-├── hooks/                    # 커스텀 훅 (use-quiz, use-vocab-cards 등)
+├── hooks/                    # 커스텀 훅 (use-quiz, use-vocab-cards, use-vocab-cards-paginated 등)
 ├── lib/
 │   ├── ai/                   # AI 클라이언트 (provider, prompts, get-ai-client)
 │   ├── supabase/             # Supabase 클라이언트 (client, server)
@@ -100,6 +120,8 @@ src/
 | study_plans | 학습 플랜 |
 | quiz_results | 퀴즈 결과 |
 | pdf_uploads | PDF 업로드 기록 |
+| daily_progress | 일일 학습 진도 |
+| daily_missions | 일일 미션 |
 | badges | 배지 정의 |
 | user_badges | 사용자 배지 획득 |
 
@@ -141,7 +163,8 @@ npm run start     # 프로덕션 서버
 |-------|------|:----------:|------|
 | MVP | 인증, 덱/카드 CRUD, 플래시카드, SM-2, 대시보드 | 92% | `a42a85d` |
 | Vocab Redesign | Multi-meaning JSONB 구조 | 100% | `4be11fe` |
-| **Phase 2** | **AI 멀티 프로바이더, 퀴즈 6종, 통계 대시보드** | **99%** | **`ced7c86`** |
+| Phase 2 | AI 멀티 프로바이더, 퀴즈 6종, 통계 대시보드 | 99% | `ced7c86` |
+| **Phase 3** | **카드 리스트 테이블, 학습 네비게이션, 카드 삽입** | **98%** | **latest** |
 
 ## 라이선스
 

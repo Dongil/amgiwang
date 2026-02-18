@@ -17,6 +17,14 @@ export type QuizType =
   | "etymology";
 export type AIProvider = "gemini" | "openai" | "claude";
 
+export interface AIProviderConfig {
+  apiKey: string;
+  model: string;
+}
+
+/** { gemini: { apiKey, model }, openai: { apiKey, model }, claude: { apiKey, model } } */
+export type AISettings = Partial<Record<AIProvider, AIProviderConfig>>;
+
 export interface Profile {
   id: string;
   display_name: string;
@@ -27,7 +35,7 @@ export interface Profile {
   streak_count: number;
   streak_last_date: string | null;
   ai_provider: AIProvider;
-  ai_api_key_encrypted: string | null;
+  ai_settings: AISettings;
   created_at: string;
   updated_at: string;
 }

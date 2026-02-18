@@ -12,21 +12,23 @@ import { queryKeys } from "@/lib/query-keys";
 import { QUALITY_MAP, type QualityLabel } from "@/lib/sm2";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GeneralCardView } from "@/components/study/general-card-view";
 import { VocabCardView } from "@/components/study/vocab-card-view";
+import { StudyNav } from "@/components/study/study-nav";
 import { useTts } from "@/hooks/use-tts";
-import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import type { Deck, Card as CardType, VocabCard, CardType as CardTypeEnum, StudyPlan } from "@/types/database";
 
 export default function StudyPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ day?: string }>;
 }) {
   const { id: deckId } = use(params);
+  const { day: dayParam } = use(searchParams);
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const {
@@ -34,7 +36,8 @@ export default function StudyPage({
     currentIndex,
     isFlipped,
     setDeck,
-    setCards,
+    setAllCards,
+    filterByDay,
     flipCard,
     nextCard,
     reset,
@@ -83,10 +86,15 @@ export default function StudyPage({
   useEffect(() => {
     if (data) {
       setDeck(data.deck);
-      setCards(data.cards);
+      setAllCards(data.cards);
+      // ?day=N searchParams → 초기 Day 필터 적용
+      if (dayParam) {
+        const dayNum = parseInt(dayParam);
+        if (!isNaN(dayNum)) filterByDay(dayNum);
+      }
     }
     return () => reset();
-  }, [data, setDeck, setCards, reset]);
+  }, [data, setDeck, setAllCards, filterByDay, reset, dayParam]);
 
   const handleGrade = useCallback(
     (label: QualityLabel) => {
@@ -162,35 +170,21 @@ export default function StudyPage({
 
   const card = currentCards[currentIndex];
   const isVocab = data.deck.deck_type === "english_vocab";
-  const progressPercent = ((currentIndex + 1) / currentCards.length) * 100;
 
   return (
     <div className="flex min-h-[calc(100dvh-4rem)] flex-col p-4">
-      {/* 헤더 */}
-      <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
-          <Link href={`/decks/${deckId}`}>
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div className="flex-1">
-          <p className="text-sm font-medium">{data.deck.title}</p>
-          <p className="text-xs text-muted-foreground">
-            {currentIndex + 1} / {currentCards.length}
-          </p>
-        </div>
-      </div>
-
-      <Progress value={progressPercent} className="mb-4 h-1.5" />
+      <StudyNav deckTitle={data.deck.title} deckId={deckId} />
 
       {/* 카드 */}
       <div className="flex-1">
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={flipCard}
-          className="w-full text-left"
+          onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") flipCard(); }}
+          className="w-full cursor-pointer text-left"
         >
-          <Card className="min-h-[300px] cursor-pointer transition-all active:scale-[0.98]">
+          <Card className="min-h-[300px] transition-all active:scale-[0.98]">
             <CardContent className="flex min-h-[300px] flex-col items-center justify-center p-6">
               {isVocab ? (
                 <VocabCardView
@@ -212,7 +206,7 @@ export default function StudyPage({
               )}
             </CardContent>
           </Card>
-        </button>
+        </div>
       </div>
 
       {/* SM-2 평가 버튼 */}

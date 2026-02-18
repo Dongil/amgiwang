@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CardListTable } from "@/components/deck/card-list-table";
 import { ArrowLeft, Plus, Play, FileText, Settings2 } from "lucide-react";
 import type { Deck, Card as CardType, VocabCard } from "@/types/database";
 
@@ -169,10 +170,10 @@ export default function DeckDetailPage({
         </CardContent>
       </Card>
 
-      {/* 카드 수 */}
-      <p className="text-center text-xs text-muted-foreground">
-        총 {cards.length}장의 카드
-      </p>
+      {/* 카드 리스트 */}
+      {deck.deck_type === "english_vocab" && (
+        <CardListTable deckId={deckId} />
+      )}
     </div>
   );
 }

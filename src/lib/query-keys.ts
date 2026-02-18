@@ -11,6 +11,8 @@ export const queryKeys = {
   vocabCards: {
     list: (deckId: string) => ["vocabCards", deckId] as const,
     detail: (id: string) => ["vocabCards", "detail", id] as const,
+    paginated: (deckId: string, opts: { page: number; day: string | null; search: string }) =>
+      ["vocabCards", deckId, "paginated", opts] as const,
   },
   studyRecords: {
     review: (userId: string) => ["studyRecords", "review", userId] as const,

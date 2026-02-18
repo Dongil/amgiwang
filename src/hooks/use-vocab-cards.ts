@@ -98,10 +98,12 @@ export function useUpdateVocabCard() {
       deckId: string;
       data: Record<string, unknown>;
     }) => {
-      const { error } = await supabaseMutate("vocab_cards", "PATCH", data, {
-        filter: `id=eq.${cardId}`,
-      });
-      if (error) throw new Error(error);
+      const supabase = createClient();
+      const { error } = await supabase
+        .from("vocab_cards")
+        .update(data)
+        .eq("id", cardId);
+      if (error) throw error;
       return deckId;
     },
     onSuccess: (deckId) => {

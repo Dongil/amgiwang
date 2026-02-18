@@ -51,6 +51,10 @@ function relatedToString(items?: VocabRelated[]): string {
 }
 
 export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFormProps) {
+  const isEditMode = !!initialData;
+  // 수정 모드에서 빈 필드는 "(입력 없음)"으로 표시하여 null과 구분
+  const ph = (example: string) => (isEditMode ? "(입력 없음)" : example);
+
   const [word, setWord] = useState(initialData?.word ?? "");
   const [phonetic, setPhonetic] = useState(initialData?.phonetic ?? "");
   const [meanings, setMeanings] = useState<VocabMeaning[]>(
@@ -281,7 +285,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
           <Label htmlFor="phonetic">발음기호</Label>
           <Input
             id="phonetic"
-            placeholder="/rigɑ́ːrd/"
+            placeholder={ph("/rigɑ́ːrd/")}
             value={phonetic}
             onChange={(e) => setPhonetic(e.target.value)}
           />
@@ -321,7 +325,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
           <div className="space-y-1">
             <Label>동의어 (쉼표 구분)</Label>
             <Input
-              placeholder="consider, think of, see"
+              placeholder={ph("consider, think of, see")}
               value={m.synonyms.join(", ")}
               onChange={(e) =>
                 updateMeaning(
@@ -343,7 +347,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="derivatives">파생어 (word:뜻, word:뜻)</Label>
         <Input
           id="derivatives"
-          placeholder="regardless:상관없이, regarding:~에 관하여"
+          placeholder={ph("regardless:상관없이, regarding:~에 관하여")}
           value={derivativesInput}
           onChange={(e) => setDerivativesInput(e.target.value)}
         />
@@ -354,7 +358,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="antonyms">반의어 (word:뜻, word:뜻)</Label>
         <Input
           id="antonyms"
-          placeholder="disregard:무시하다"
+          placeholder={ph("disregard:무시하다")}
           value={antonymsInput}
           onChange={(e) => setAntonymsInput(e.target.value)}
         />
@@ -365,7 +369,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="example">예문</Label>
         <Textarea
           id="example"
-          placeholder="She was worried that her fans would still regard her..."
+          placeholder={ph("She was worried that her fans would still regard her...")}
           value={exampleSentence}
           onChange={(e) => setExampleSentence(e.target.value)}
           rows={2}
@@ -376,7 +380,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="exampleTr">예문 해석</Label>
         <Input
           id="exampleTr"
-          placeholder="그녀는 그녀의 팬들이 여전히..."
+          placeholder={ph("그녀는 그녀의 팬들이 여전히...")}
           value={exampleTranslation}
           onChange={(e) => setExampleTranslation(e.target.value)}
         />
@@ -405,7 +409,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
           <Label htmlFor="prefix">접두사</Label>
           <Input
             id="prefix"
-            placeholder="re-"
+            placeholder={ph("re-")}
             value={prefix}
             onChange={(e) => setPrefix(e.target.value)}
           />
@@ -414,7 +418,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
           <Label htmlFor="root">어근</Label>
           <Input
             id="root"
-            placeholder="gard"
+            placeholder={ph("gard")}
             value={root}
             onChange={(e) => setRoot(e.target.value)}
           />
@@ -423,7 +427,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
           <Label htmlFor="suffix">접미사</Label>
           <Input
             id="suffix"
-            placeholder=""
+            placeholder={ph("-ment, -ly")}
             value={suffix}
             onChange={(e) => setSuffix(e.target.value)}
           />
@@ -434,7 +438,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="etymologyNote">어원 설명</Label>
         <Input
           id="etymologyNote"
-          placeholder="라틴어 regarder..."
+          placeholder={ph("라틴어 regarder...")}
           value={etymologyNote}
           onChange={(e) => setEtymologyNote(e.target.value)}
         />
@@ -460,7 +464,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
       </div>
       <Input
         id="mnemonic"
-        placeholder="리가드 → 리 가드 → ..."
+        placeholder={ph("리가드 → 리 가드 → ...")}
         value={mnemonic}
         onChange={(e) => setMnemonic(e.target.value)}
       />
@@ -470,7 +474,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="tips">Tips (시험 패턴)</Label>
         <Textarea
           id="tips"
-          placeholder="with regard to ~에 관해서&#10;regard A as B"
+          placeholder={ph("with regard to ~에 관해서\nregard A as B")}
           value={tips}
           onChange={(e) => setTips(e.target.value)}
           rows={2}
@@ -482,7 +486,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="vtags">태그 (쉼표 구분)</Label>
         <Input
           id="vtags"
-          placeholder="수능필수, Day1"
+          placeholder={ph("수능필수, Day1")}
           value={tagsInput}
           onChange={(e) => setTagsInput(e.target.value)}
         />

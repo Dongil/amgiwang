@@ -61,3 +61,22 @@
 |----------|------|
 | Analysis | `phase2.analysis.md` |
 | Report | `phase2.report.md` |
+
+---
+
+## deck-card-list-and-study-nav
+
+| Field | Value |
+|-------|-------|
+| **Feature** | 덱 카드 리스트 & 학습 네비게이션 |
+| **Archived** | 2026-02-18 |
+| **Match Rate** | 98% |
+| **Iterations** | 1 |
+| **Phase** | Completed |
+
+### Documents
+
+| Document | File |
+|----------|------|
+| Plan | `deck-card-list-and-study-nav.plan.md` |
+| Report | `deck-card-list-and-study-nav.report.md` |
