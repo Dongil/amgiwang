@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-18T10:41:41.948Z",
+  "lastUpdated": "2026-02-18T10:58:31.494Z",
   "activeFeatures": [
     "amgiwang-mvp",
     "vocab-card-redesign",
@@ -217,9 +217,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-14T13:44:27.424Z",
-        "lastUpdated": "2026-02-18T04:39:17.673Z"
+        "lastUpdated": "2026-02-18T10:58:31.494Z"
       },
-      "lastFile": "C:\\code\\amgiwang\\src\\lib\\ai\\json-repair.ts"
+      "lastFile": "C:\\code\\amgiwang\\src\\lib\\ai\\provider.ts"
     },
     "gamification": {
       "phase": "do",
@@ -451,7 +451,7 @@
   "session": {
     "startedAt": "2026-02-14T04:12:28.142Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-18T10:41:41.948Z"
+    "lastActivity": "2026-02-18T10:58:31.494Z"
   },
   "history": [
     {
@@ -1007,6 +1007,12 @@
     {
       "timestamp": "2026-02-18T10:41:41.948Z",
       "feature": "study",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-18T10:58:31.494Z",
+      "feature": "ai",
       "phase": "do",
       "action": "updated"
     }

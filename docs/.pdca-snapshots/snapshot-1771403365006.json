@@ -1,0 +1,914 @@
+{
+  "timestamp": "2026-02-18T08:29:25.005Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-18T08:29:24.811Z",
+    "activeFeatures": [
+      "amgiwang-mvp",
+      "vocab-card-redesign",
+      "amgiwang",
+      "card",
+      "new",
+      "study",
+      "study-plan",
+      "stores",
+      "supabase",
+      "[id]",
+      "edit",
+      "upload-pdf",
+      "quiz",
+      "ai",
+      "gamification",
+      "(main)",
+      "decks",
+      "validate-key",
+      "generate-vocab",
+      "generate-cards",
+      "generate-etymology",
+      "generate-mnemonic",
+      "generate-quiz",
+      "parse",
+      "pdf",
+      "stats",
+      "seed-deck",
+      "deck"
+    ],
+    "primaryFeature": "phase2",
+    "features": {
+      "phase2": {
+        "phase": "archived",
+        "matchRate": 99,
+        "iterationCount": 3,
+        "startedAt": "2026-02-15T13:35:00.000Z",
+        "archivedAt": "2026-02-15T16:00:00.000Z",
+        "archivedTo": "docs/archive/2026-02/phase2/"
+      },
+      "vocab-card-redesign": {
+        "phase": "archived",
+        "matchRate": 100,
+        "iterationCount": 0,
+        "startedAt": "2026-02-15T11:50:00.000Z",
+        "archivedAt": "2026-02-15T12:30:00.000Z",
+        "archivedTo": "docs/archive/2026-02/vocab-card-redesign/"
+      },
+      "amgiwang-mvp": {
+        "phase": "archived",
+        "matchRate": 92,
+        "iterationCount": 2,
+        "startedAt": "2026-02-14T06:50:00.000Z",
+        "archivedAt": "2026-02-14T14:10:00.000Z",
+        "archivedTo": "docs/archive/2026-02/amgiwang-mvp/"
+      },
+      "amgiwang": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:18:57.922Z",
+          "lastUpdated": "2026-02-18T08:28:37.112Z"
+        },
+        "lastFile": "C:/code/amgiwang/src/hooks/use-vocab-cards-paginated.ts"
+      },
+      "card": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:19:40.876Z",
+          "lastUpdated": "2026-02-18T08:29:24.811Z"
+        },
+        "lastFile": "C:/code/amgiwang/src/components/card/vocab-card-form.tsx"
+      },
+      "new": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:24:28.203Z",
+          "lastUpdated": "2026-02-15T11:50:30.275Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\cards\\new\\page.tsx"
+      },
+      "study": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:25:00.420Z",
+          "lastUpdated": "2026-02-18T06:45:21.774Z"
+        },
+        "lastFile": "C:/code/amgiwang/src/app/(main)/decks/[id]/study/page.tsx"
+      },
+      "study-plan": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:25:23.670Z",
+          "lastUpdated": "2026-02-15T08:05:28.931Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\study-plan\\page.tsx"
+      },
+      "stores": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:42:30.804Z",
+          "lastUpdated": "2026-02-18T06:43:59.738Z"
+        },
+        "lastFile": "C:/code/amgiwang/src/stores/study-store.ts"
+      },
+      "supabase": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:56:04.332Z",
+          "lastUpdated": "2026-02-14T13:24:30.440Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\lib\\supabase\\client.ts"
+      },
+      "[id]": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T12:56:21.847Z",
+          "lastUpdated": "2026-02-18T06:43:35.947Z"
+        },
+        "lastFile": "C:/code/amgiwang/src/app/(main)/decks/[id]/page.tsx"
+      },
+      "edit": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:43:49.317Z",
+          "lastUpdated": "2026-02-14T13:43:49.317Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\edit\\page.tsx"
+      },
+      "upload-pdf": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:44:00.565Z",
+          "lastUpdated": "2026-02-18T04:38:55.940Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\[id]\\upload-pdf\\page.tsx"
+      },
+      "quiz": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:44:11.799Z",
+          "lastUpdated": "2026-02-15T14:19:17.659Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\components\\quiz\\quiz-session.tsx"
+      },
+      "ai": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:44:27.424Z",
+          "lastUpdated": "2026-02-18T04:39:17.673Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\lib\\ai\\json-repair.ts"
+      },
+      "gamification": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:44:59.752Z",
+          "lastUpdated": "2026-02-14T13:47:34.805Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\components\\gamification\\daily-missions.tsx"
+      },
+      "(main)": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:45:16.910Z",
+          "lastUpdated": "2026-02-14T13:45:19.417Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\page.tsx"
+      },
+      "decks": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-14T13:53:42.858Z",
+          "lastUpdated": "2026-02-14T13:53:56.546Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\decks\\page.tsx"
+      },
+      "validate-key": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:37:02.227Z",
+          "lastUpdated": "2026-02-18T02:32:40.182Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\ai\\validate-key\\route.ts"
+      },
+      "generate-vocab": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:37:11.088Z",
+          "lastUpdated": "2026-02-18T05:17:56.004Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\ai\\generate-vocab\\route.ts"
+      },
+      "generate-cards": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:37:17.659Z",
+          "lastUpdated": "2026-02-18T04:39:09.065Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\ai\\generate-cards\\route.ts"
+      },
+      "generate-etymology": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:37:23.414Z",
+          "lastUpdated": "2026-02-15T13:46:16.018Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\ai\\generate-etymology\\route.ts"
+      },
+      "generate-mnemonic": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:37:30.167Z",
+          "lastUpdated": "2026-02-15T13:46:23.687Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\ai\\generate-mnemonic\\route.ts"
+      },
+      "generate-quiz": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:37:36.866Z",
+          "lastUpdated": "2026-02-15T13:46:30.767Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\ai\\generate-quiz\\route.ts"
+      },
+      "parse": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:38:43.814Z",
+          "lastUpdated": "2026-02-18T04:22:15.878Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\pdf\\parse\\route.ts"
+      },
+      "pdf": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:39:10.098Z",
+          "lastUpdated": "2026-02-18T05:28:59.235Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\components\\pdf\\pdf-card-preview.tsx"
+      },
+      "stats": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-15T13:44:51.752Z",
+          "lastUpdated": "2026-02-15T14:18:09.160Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\(main)\\stats\\page.tsx"
+      },
+      "seed-deck": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-18T05:26:06.161Z",
+          "lastUpdated": "2026-02-18T05:26:06.161Z"
+        },
+        "lastFile": "C:\\code\\amgiwang\\src\\app\\api\\admin\\seed-deck\\route.ts"
+      },
+      "deck": {
+        "phase": "do",
+        "phaseNumber": 3,
+        "matchRate": null,
+        "iterationCount": 0,
+        "requirements": [],
+        "documents": {},
+        "timestamps": {
+          "started": "2026-02-18T06:42:47.671Z",
+          "lastUpdated": "2026-02-18T08:13:07.614Z"
+        },
+        "lastFile": "C:/code/amgiwang/src/components/deck/card-list-table.tsx"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 3,
+      "level": "Dynamic",
+      "phaseHistory": [
+        {
+          "phase": "plan",
+          "completedAt": "2026-02-14T06:50:00.000Z",
+          "document": "docs/01-plan/plan-amgiwang.md"
+        },
+        {
+          "phase": "design",
+          "completedAt": "2026-02-14T07:30:00.000Z",
+          "documents": [
+            "docs/02-design/data-model.md",
+            "docs/02-design/api-spec.md",
+            "docs/02-design/component-spec.md"
+          ]
+        },
+        {
+          "phase": "do",
+          "startedAt": "2026-02-14T10:40:00.000Z",
+          "status": "in_progress",
+          "completedItems": [
+            "프로젝트 초기화 (Next.js 16 + Tailwind v4 + shadcn/ui)",
+            "Supabase 클라이언트 설정 (client, server, middleware)",
+            "PWA manifest + next-pwa 설정",
+            "타입 정의 (database.ts)",
+            "SM-2 알고리즘",
+            "Zustand stores (auth-store, study-store)",
+            "TanStack Query 설정 (queryKeys, provider)",
+            "인증 페이지 (login, signup)",
+            "메인 레이아웃 + BottomNav",
+            "대시보드 (홈) + 대시보드 컴포넌트",
+            "덱 목록 + 덱 카드 컴포넌트",
+            "덱 생성 페이지",
+            "덱 상세 페이지 (병렬 페칭)",
+            "설정 페이지",
+            "통계 페이지 (플레이스홀더)",
+            "DB 마이그레이션 SQL (13테이블 + RLS + 인덱스 + 트리거)",
+            "시드 데이터 (20 badges)"
+          ]
+        }
+      ]
+    },
+    "session": {
+      "startedAt": "2026-02-14T04:12:28.142Z",
+      "onboardingCompleted": true,
+      "lastActivity": "2026-02-18T08:29:24.811Z"
+    },
+    "history": [
+      {
+        "action": "plan_created",
+        "feature": "amgiwang-mvp",
+        "timestamp": "2026-02-14T06:50:00.000Z"
+      },
+      {
+        "action": "design_completed",
+        "feature": "amgiwang-mvp",
+        "timestamp": "2026-02-14T07:30:00.000Z"
+      },
+      {
+        "action": "do_started",
+        "feature": "amgiwang-mvp",
+        "timestamp": "2026-02-14T10:40:00.000Z"
+      },
+      {
+        "action": "report_completed",
+        "feature": "phase2",
+        "timestamp": "2026-02-15T15:30:00.000Z",
+        "matchRate": 99,
+        "iterations": 3
+      },
+      {
+        "timestamp": "2026-02-18T02:22:36.261Z",
+        "feature": "amgiwang",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:22:40.577Z",
+        "feature": "amgiwang",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:22:59.975Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:23:09.511Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:23:17.484Z",
+        "feature": "validate-key",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:23:52.908Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:32:40.182Z",
+        "feature": "validate-key",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:32:50.252Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T02:53:10.289Z",
+        "feature": "parse",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T03:27:42.488Z",
+        "feature": "parse",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:22:15.878Z",
+        "feature": "parse",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:24:37.013Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:38:47.024Z",
+        "feature": "generate-vocab",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:38:55.940Z",
+        "feature": "upload-pdf",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:39:09.065Z",
+        "feature": "generate-cards",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:39:17.673Z",
+        "feature": "ai",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T04:39:28.055Z",
+        "feature": "generate-vocab",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T05:17:56.004Z",
+        "feature": "generate-vocab",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T05:26:06.161Z",
+        "feature": "seed-deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T05:28:59.235Z",
+        "feature": "pdf",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:41:27.344Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:41:57.005Z",
+        "feature": "amgiwang",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:42:11.272Z",
+        "feature": "amgiwang",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:42:47.671Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:43:18.937Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:43:30.578Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:43:35.947Z",
+        "feature": "[id]",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:43:59.738Z",
+        "feature": "stores",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:44:29.863Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:44:48.803Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:44:53.368Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:44:57.499Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:45:05.270Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:45:13.721Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:45:21.774Z",
+        "feature": "study",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:52:27.219Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:52:34.530Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:52:39.362Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:52:53.463Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:52:59.259Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:53:09.994Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:53:19.986Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:53:27.520Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T06:53:44.829Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:30:39.041Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:30:43.883Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:30:48.497Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:30:56.456Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:02.455Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:09.603Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:13.747Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:17.844Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:22.788Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:29.094Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:31:39.325Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:43:31.582Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:43:39.890Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:43:45.569Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:43:51.934Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:48:45.546Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:48:54.535Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T07:48:59.811Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:12:45.822Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:13:02.452Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:13:07.614Z",
+        "feature": "deck",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:28:37.112Z",
+        "feature": "amgiwang",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:28:54.532Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:29:00.416Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:29:04.893Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:29:09.700Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:29:14.314Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:29:18.898Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      },
+      {
+        "timestamp": "2026-02-18T08:29:24.811Z",
+        "feature": "card",
+        "phase": "do",
+        "action": "updated"
+      }
+    ]
+  }
+}

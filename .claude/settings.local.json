@@ -18,7 +18,18 @@
       "Bash(npx next build:*)",
       "Bash(npm run dev:*)",
       "Bash(npx tsc:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(npx supabase projects list)",
+      "Bash(npx supabase:*)",
+      "Bash(npx next dev:*)",
+      "Bash(node -e:*)",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "WebFetch(domain:localhost)"
     ]
   },
   "enableAllProjectMcpServers": true,
