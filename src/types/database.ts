@@ -1,5 +1,6 @@
 export type DeckType = "english_vocab" | "general";
 export type CardType = "general" | "english_vocab";
+export type ShareMode = "none" | "public" | "private";
 export type StudyPlanStatus = "active" | "completed" | "paused";
 export type PdfUploadStatus =
   | "uploading"
@@ -52,6 +53,10 @@ export interface Deck {
   mastered_count: number;
   share_id: string | null;
   is_shared: boolean;
+  share_mode: ShareMode;
+  import_count: number;
+  source_deck_id: string | null;
+  source_user_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -200,4 +205,35 @@ export interface DailyMission {
   xp_reward: number;
   is_completed: boolean;
   created_at: string;
+}
+
+export interface DeckShare {
+  id: string;
+  deck_id: string;
+  owner_id: string;
+  shared_with_id: string;
+  created_at: string;
+}
+
+export interface SharedDeckView {
+  id: string;
+  title: string;
+  description: string | null;
+  deck_type: DeckType;
+  subject: string;
+  color: string;
+  card_count: number;
+  import_count: number;
+  share_mode: ShareMode;
+  created_at: string;
+  owner: {
+    id: string;
+    display_name: string;
+  };
+}
+
+export interface UserSearchResult {
+  id: string;
+  display_name: string;
+  email_masked: string;
 }

@@ -1,17 +1,22 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/stores/auth-store";
 import { queryKeys } from "@/lib/query-keys";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CardListTable } from "@/components/deck/card-list-table";
-import { ArrowLeft, Plus, Play, FileText, Settings2 } from "lucide-react";
+import dynamic from "next/dynamic";
+const ShareDialog = dynamic(() => import("@/components/deck/share-dialog").then((m) => m.ShareDialog), {
+  ssr: false,
+});
+import { ArrowLeft, Plus, Play, FileText, Settings2, Share2 } from "lucide-react";
 import type { Deck, Card as CardType, VocabCard } from "@/types/database";
 
 export default function DeckDetailPage({
@@ -21,6 +26,8 @@ export default function DeckDetailPage({
 }) {
   const { id: deckId } = use(params);
   const user = useAuthStore((s) => s.user);
+  const queryClient = useQueryClient();
+  const [shareOpen, setShareOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: queryKeys.decks.detail(deckId),
@@ -57,7 +64,7 @@ export default function DeckDetailPage({
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-4">
+      <div className="space-y-5 p-5">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-20 w-full" />
@@ -80,7 +87,7 @@ export default function DeckDetailPage({
       : 0;
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-5 p-5">
       {/* 헤더 */}
       <div className="flex items-center gap-2">
         <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
@@ -89,7 +96,7 @@ export default function DeckDetailPage({
           </Link>
         </Button>
         <div className="flex-1">
-          <h1 className="text-lg font-bold">
+          <h1 className="text-xl font-bold tracking-tight">
             {deck.deck_type === "english_vocab" ? "🔤" : "📖"} {deck.title}
           </h1>
           <p className="text-xs text-muted-foreground">
@@ -97,6 +104,9 @@ export default function DeckDetailPage({
             {deck.deck_type === "english_vocab" ? "단어" : "카드"}
           </p>
         </div>
+        <Button variant="ghost" size="icon" aria-label="공유 설정" onClick={() => setShareOpen(true)}>
+          <Share2 className="h-4 w-4" />
+        </Button>
         <Button asChild variant="ghost" size="icon" aria-label="덱 설정">
           <Link href={`/decks/${deckId}/edit`}>
             <Settings2 className="h-4 w-4" />
@@ -104,9 +114,23 @@ export default function DeckDetailPage({
         </Button>
       </div>
 
+      {deck.share_mode !== "none" && (
+        <Badge variant="secondary" className="text-xs">
+          {deck.share_mode === "public" ? "전체 공유" : "비공개 공유"}
+        </Badge>
+      )}
+
+      <ShareDialog
+        deckId={deckId}
+        currentMode={deck.share_mode ?? "none"}
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        onSaved={() => queryClient.invalidateQueries({ queryKey: queryKeys.decks.detail(deckId) })}
+      />
+
       {/* 진도 */}
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-5">
           <div className="flex items-center justify-between text-sm">
             <span>암기율</span>
             <span className="font-medium">{masteredRate}%</span>
@@ -144,7 +168,7 @@ export default function DeckDetailPage({
 
       {/* 학습 계획 */}
       <Card>
-        <CardContent className="p-4">
+        <CardContent className="p-5">
           {plan ? (
             <div className="flex items-center justify-between">
               <div>

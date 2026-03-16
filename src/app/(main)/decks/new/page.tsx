@@ -60,14 +60,14 @@ export default function NewDeckPage() {
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center gap-2">
+    <div className="p-5">
+      <div className="mb-5 flex items-center gap-2">
         <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href="/decks">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
-        <h1 className="text-lg font-bold">새 덱 만들기</h1>
+        <h1 className="text-xl font-bold tracking-tight">새 덱 만들기</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

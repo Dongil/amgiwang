@@ -9,7 +9,7 @@ import { ReviewCard } from "@/components/study/review-card";
 
 export default function Dashboard() {
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-5 p-5">
       <Suspense fallback={<Skeleton className="h-16 w-full" />}>
         <LevelProgressBar />
       </Suspense>

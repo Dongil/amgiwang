@@ -50,7 +50,7 @@ export default function StatsPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-4">
+      <div className="space-y-5 p-5">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-24 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -156,8 +156,8 @@ export default function StatsPage() {
   }));
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="text-xl font-bold">학습 통계</h1>
+    <div className="space-y-5 p-5">
+      <h1 className="text-2xl font-bold tracking-tight">학습 통계</h1>
 
       {/* 요약 카드 */}
       <div className="grid grid-cols-2 gap-3">

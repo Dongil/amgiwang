@@ -145,27 +145,35 @@ export function QuizQuestion({
 
       {/* 답변 영역 */}
       {question.choices ? (
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 gap-3">
           {question.choices.map((choice, i) => {
-            let variant: "outline" | "default" | "destructive" = "outline";
+            let borderClass = "border-border";
+            let bgClass = "";
             if (showResult) {
-              if (choice === question.correctAnswer) variant = "default";
-              else if (choice === selectedAnswer) variant = "destructive";
+              if (choice === question.correctAnswer) {
+                borderClass = "border-primary";
+                bgClass = "bg-primary/10";
+              } else if (choice === selectedAnswer) {
+                borderClass = "border-destructive";
+                bgClass = "bg-destructive/10";
+              }
+            } else if (choice === selectedAnswer) {
+              borderClass = "border-primary";
+              bgClass = "bg-primary/5";
             }
 
             return (
-              <Button
+              <button
                 key={i}
-                variant={variant}
-                className="h-auto min-h-[48px] justify-start whitespace-normal px-4 py-3 text-left"
+                className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-colors ${borderClass} ${bgClass}`}
                 onClick={() => handleChoiceSelect(choice)}
                 disabled={showResult}
               >
-                <span className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs">
+                <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium">
                   {i + 1}
                 </span>
-                {choice}
-              </Button>
+                <span className="text-sm">{choice}</span>
+              </button>
             );
           })}
         </div>

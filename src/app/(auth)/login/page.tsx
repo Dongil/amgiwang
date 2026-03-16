@@ -7,7 +7,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { BookOpen } from "lucide-react";
 import { toast } from "sonner";
 
 export default function LoginPage() {
@@ -28,19 +28,26 @@ export default function LoginPage() {
   }
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">암기왕</CardTitle>
-        <CardDescription>로그인하고 학습을 시작하세요</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+    <div className="space-y-8">
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+          <BookOpen className="h-8 w-8 text-primary" aria-hidden="true" />
+        </div>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight">암기왕</h1>
+          <p className="mt-1 text-sm text-muted-foreground">AI 암기 학습 앱</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">이메일</Label>
             <Input
               id="email"
               type="email"
               placeholder="name@example.com"
+              className="h-12 rounded-xl"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -52,24 +59,25 @@ export default function LoginPage() {
               id="password"
               type="password"
               placeholder="비밀번호 입력"
+              className="h-12 rounded-xl"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "로그인 중…" : "로그인"}
-          </Button>
-          <p className="text-center text-sm text-muted-foreground">
-            계정이 없으신가요?{" "}
-            <Link href="/signup" className="font-medium text-primary hover:underline">
-              회원가입
-            </Link>
-          </p>
-        </CardFooter>
+        </div>
+
+        <Button type="submit" className="h-12 w-full rounded-xl text-base" disabled={isLoading}>
+          {isLoading ? "로그인 중…" : "로그인"}
+        </Button>
+
+        <p className="text-center text-sm text-muted-foreground">
+          계정이 없으신가요?{" "}
+          <Link href="/signup" className="font-medium text-primary hover:underline">
+            회원가입
+          </Link>
+        </p>
       </form>
-    </Card>
+    </div>
   );
 }

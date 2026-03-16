@@ -150,7 +150,7 @@ export default function StudyPage({
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-4">
+      <div className="space-y-5 p-5">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-80 w-full" />
       </div>
@@ -172,7 +172,7 @@ export default function StudyPage({
   const isVocab = data.deck.deck_type === "english_vocab";
 
   return (
-    <div className="flex min-h-[calc(100dvh-4rem)] flex-col p-4">
+    <div className="flex min-h-[calc(100dvh-4rem)] flex-col p-5">
       <StudyNav deckTitle={data.deck.title} deckId={deckId} />
 
       {/* 카드 */}

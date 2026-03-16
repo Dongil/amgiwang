@@ -45,7 +45,7 @@ export default function NewCardPage({
 
   if (isLoading) {
     return (
-      <div className="space-y-4 p-4">
+      <div className="space-y-5 p-5">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64 w-full" />
       </div>
@@ -133,8 +133,8 @@ export default function NewCardPage({
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center gap-2">
+    <div className="p-5">
+      <div className="mb-5 flex items-center gap-2">
         <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deckId}`}>
             <ArrowLeft className="h-4 w-4" />

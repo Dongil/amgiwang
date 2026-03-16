@@ -142,8 +142,8 @@ export default function AISettingsPage() {
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center gap-2">
+    <div className="p-5">
+      <div className="mb-5 flex items-center gap-2">
         <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href="/settings">
             <ArrowLeft className="h-4 w-4" />
