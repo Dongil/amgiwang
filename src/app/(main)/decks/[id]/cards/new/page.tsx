@@ -135,7 +135,7 @@ export default function NewCardPage({
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deckId}`}>
             <ArrowLeft className="h-4 w-4" />
           </Link>

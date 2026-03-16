@@ -144,7 +144,7 @@ export default function AISettingsPage() {
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href="/settings">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -170,7 +170,7 @@ export default function AISettingsPage() {
               >
                 <p className="text-sm font-medium">{p.name}</p>
                 {defaultProvider === p.id && (
-                  <Check className="mx-auto mt-0.5 h-3 w-3 text-primary" />
+                  <Check className="mx-auto mt-0.5 h-3 w-3 text-primary" aria-hidden="true" />
                 )}
               </button>
             ))}
@@ -268,7 +268,7 @@ export default function AISettingsPage() {
         })}
 
         <Button type="submit" className="w-full" disabled={isSaving}>
-          {isSaving ? "저장 중..." : "저장"}
+          {isSaving ? "저장 중…" : "저장"}
         </Button>
       </form>
     </div>

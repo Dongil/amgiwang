@@ -259,7 +259,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         {aiLoading === "all" ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            AI 분석 중...
+            AI 분석 중…
           </>
         ) : (
           <>
@@ -369,7 +369,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="example">예문</Label>
         <Textarea
           id="example"
-          placeholder={ph("She was worried that her fans would still regard her...")}
+          placeholder={ph("She was worried that her fans would still regard her…")}
           value={exampleSentence}
           onChange={(e) => setExampleSentence(e.target.value)}
           rows={2}
@@ -380,7 +380,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="exampleTr">예문 해석</Label>
         <Input
           id="exampleTr"
-          placeholder={ph("그녀는 그녀의 팬들이 여전히...")}
+          placeholder={ph("그녀는 그녀의 팬들이 여전히…")}
           value={exampleTranslation}
           onChange={(e) => setExampleTranslation(e.target.value)}
         />
@@ -438,7 +438,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
         <Label htmlFor="etymologyNote">어원 설명</Label>
         <Input
           id="etymologyNote"
-          placeholder={ph("라틴어 regarder...")}
+          placeholder={ph("라틴어 regarder…")}
           value={etymologyNote}
           onChange={(e) => setEtymologyNote(e.target.value)}
         />
@@ -464,7 +464,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
       </div>
       <Input
         id="mnemonic"
-        placeholder={ph("리가드 → 리 가드 → ...")}
+        placeholder={ph("리가드 → 리 가드 → …")}
         value={mnemonic}
         onChange={(e) => setMnemonic(e.target.value)}
       />
@@ -493,7 +493,7 @@ export function VocabCardForm({ onSubmit, isLoading, initialData }: VocabCardFor
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "저장 중..." : initialData ? "수정" : "단어 추가"}
+        {isLoading ? "저장 중…" : initialData ? "수정" : "단어 추가"}
       </Button>
     </form>
   );

@@ -174,7 +174,7 @@ export function TextCardGenerator({
               placeholder={
                 isVocab
                   ? "단어를 입력하세요 (줄바꿈으로 구분)\n예: apple\nbanana\ncherry"
-                  : "학습 내용을 입력하세요...\nAI가 자동으로 카드를 생성합니다."
+                  : "학습 내용을 입력하세요…\nAI가 자동으로 카드를 생성합니다."
               }
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -188,7 +188,7 @@ export function TextCardGenerator({
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  AI 생성 중...
+                  AI 생성 중…
                 </>
               ) : (
                 <>

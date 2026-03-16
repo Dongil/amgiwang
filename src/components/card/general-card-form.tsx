@@ -65,7 +65,7 @@ export function GeneralCardForm({ onSubmit, isLoading, initialData }: GeneralCar
         />
       </div>
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "저장 중..." : initialData ? "수정" : "카드 추가"}
+        {isLoading ? "저장 중…" : initialData ? "수정" : "카드 추가"}
       </Button>
     </form>
   );

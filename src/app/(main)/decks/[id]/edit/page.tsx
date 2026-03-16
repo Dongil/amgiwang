@@ -129,7 +129,7 @@ function EditForm({
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deck.id}`}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -180,6 +180,7 @@ function EditForm({
                 key={c}
                 type="button"
                 onClick={() => setColor(c)}
+                aria-label={`색상 ${c}`}
                 className={`h-8 w-8 rounded-full transition-transform ${
                   color === c ? "scale-110 ring-2 ring-offset-2 ring-primary" : ""
                 }`}
@@ -195,7 +196,7 @@ function EditForm({
         </div>
 
         <Button type="submit" className="w-full" disabled={isSaving}>
-          {isSaving ? "저장 중..." : "저장"}
+          {isSaving ? "저장 중…" : "저장"}
         </Button>
       </form>
 
@@ -207,7 +208,7 @@ function EditForm({
           disabled={isDeleting}
         >
           <Trash2 className="mr-2 h-4 w-4" />
-          {isDeleting ? "삭제 중..." : "덱 삭제"}
+          {isDeleting ? "삭제 중…" : "덱 삭제"}
         </Button>
       </div>
     </div>

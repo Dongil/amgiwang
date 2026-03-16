@@ -173,7 +173,7 @@ export function QuizQuestion({
         <form onSubmit={handleTypedSubmit} className="space-y-3">
           <Input
             ref={inputRef}
-            placeholder="답을 입력하세요..."
+            placeholder="답을 입력하세요…"
             value={typedAnswer}
             onChange={(e) => setTypedAnswer(e.target.value)}
             disabled={showResult}

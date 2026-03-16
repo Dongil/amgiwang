@@ -83,7 +83,7 @@ export default function DeckDetailPage({
     <div className="space-y-4 p-4">
       {/* 헤더 */}
       <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href="/decks">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -97,7 +97,7 @@ export default function DeckDetailPage({
             {deck.deck_type === "english_vocab" ? "단어" : "카드"}
           </p>
         </div>
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="덱 설정">
           <Link href={`/decks/${deckId}/edit`}>
             <Settings2 className="h-4 w-4" />
           </Link>

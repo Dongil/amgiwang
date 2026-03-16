@@ -98,7 +98,7 @@ export default function SignupPage() {
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "가입 중..." : "회원가입"}
+            {isLoading ? "가입 중…" : "회원가입"}
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             이미 계정이 있으신가요?{" "}

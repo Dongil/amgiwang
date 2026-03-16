@@ -62,7 +62,7 @@ export default function NewDeckPage() {
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href="/decks">
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -156,6 +156,7 @@ export default function NewDeckPage() {
                   key={c}
                   type="button"
                   onClick={() => setColor(c)}
+                  aria-label={`색상 ${c}`}
                   className={`h-8 w-8 rounded-full transition-transform ${
                     color === c ? "scale-110 ring-2 ring-offset-2 ring-primary" : ""
                   }`}
@@ -167,7 +168,7 @@ export default function NewDeckPage() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "생성 중..." : "덱 만들기"}
+          {isSubmitting ? "생성 중…" : "덱 만들기"}
         </Button>
       </form>
     </div>

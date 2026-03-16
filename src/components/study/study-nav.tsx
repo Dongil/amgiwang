@@ -95,7 +95,7 @@ export function StudyNav({ deckTitle, deckId }: StudyNavProps) {
     <div className="mb-4 space-y-2">
       {/* Row 1: Back + Title */}
       <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deckId}`}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -131,6 +131,7 @@ export function StudyNav({ deckTitle, deckId }: StudyNavProps) {
             className="h-8 w-8"
             disabled={currentIndex === 0}
             onClick={prevCard}
+            aria-label="이전 카드"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -140,6 +141,7 @@ export function StudyNav({ deckTitle, deckId }: StudyNavProps) {
               setJumpValue(String(currentIndex + 1));
               setJumpOpen(true);
             }}
+            aria-label="카드 번호로 이동"
             className="rounded px-2 py-1 text-sm hover:bg-accent"
           >
             {currentIndex + 1}/{currentCards.length}
@@ -150,6 +152,7 @@ export function StudyNav({ deckTitle, deckId }: StudyNavProps) {
             className="h-8 w-8"
             disabled={currentIndex >= currentCards.length - 1}
             onClick={nextCard}
+            aria-label="다음 카드"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -179,6 +182,7 @@ export function StudyNav({ deckTitle, deckId }: StudyNavProps) {
                 setSearchOpen(false);
                 setSearchQuery("");
               }}
+              aria-label="검색 닫기"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -189,6 +193,7 @@ export function StudyNav({ deckTitle, deckId }: StudyNavProps) {
             size="icon"
             className="h-8 w-8"
             onClick={() => setSearchOpen(true)}
+            aria-label="단어 검색"
           >
             <Search className="h-4 w-4" />
           </Button>

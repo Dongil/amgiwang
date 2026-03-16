@@ -340,7 +340,7 @@ export function QuizSession({ deckId, deckType, cards }: QuizSessionProps) {
         {aiEnhancing && (
           <div className="flex items-center justify-center gap-2 rounded-lg bg-primary/5 p-2 text-xs text-primary">
             <Loader2 className="h-3 w-3 animate-spin" />
-            AI 보기 생성 중...
+            AI 보기 생성 중…
           </div>
         )}
         <QuizQuestion

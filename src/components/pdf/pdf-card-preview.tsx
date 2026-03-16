@@ -410,7 +410,7 @@ export function PdfCardPreview({
                 {processing ? (
                   <>
                     <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
-                    Day {currentDay} 처리 중...
+                    Day {currentDay} 처리 중…
                   </>
                 ) : errorDays > 0 ? (
                   <>
@@ -457,7 +457,7 @@ export function PdfCardPreview({
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  저장 중...
+                  저장 중…
                 </>
               ) : (
                 `${totalSelected}개 카드 저장`

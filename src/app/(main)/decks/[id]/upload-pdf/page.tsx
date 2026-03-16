@@ -108,7 +108,7 @@ export default function UploadPdfPage({
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deckId}`}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -122,11 +122,11 @@ export default function UploadPdfPage({
       <Tabs defaultValue="pdf">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="pdf">
-            <FileText className="mr-1 h-3 w-3" />
+            <FileText className="mr-1 h-3 w-3" aria-hidden="true" />
             PDF 업로드
           </TabsTrigger>
           <TabsTrigger value="text">
-            <Type className="mr-1 h-3 w-3" />
+            <Type className="mr-1 h-3 w-3" aria-hidden="true" />
             텍스트 입력
           </TabsTrigger>
         </TabsList>

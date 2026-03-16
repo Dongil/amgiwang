@@ -141,7 +141,7 @@ export default function StatsPage() {
       .slice(0, 10)
       .map(([cardId, v]) => ({
         cardId,
-        frontText: cardId.slice(0, 8) + "...",
+        frontText: cardId.slice(0, 8) + "…",
         incorrectCount: v.incorrect,
         totalAttempts: v.total,
       }));

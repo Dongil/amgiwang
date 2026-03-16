@@ -63,7 +63,7 @@ export default function StudyPlanPage({
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deckId}`}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -227,7 +227,7 @@ function PlanStatus({
                 onClick={() => updatePlan.mutate()}
                 disabled={updatePlan.isPending}
               >
-                {updatePlan.isPending ? "저장 중..." : "저장"}
+                {updatePlan.isPending ? "저장 중…" : "저장"}
               </Button>
               <Button
                 variant="outline"
@@ -277,7 +277,7 @@ function PlanStatus({
                 onClick={() => deletePlan.mutate()}
                 disabled={deletePlan.isPending}
               >
-                {deletePlan.isPending ? "삭제 중..." : "삭제"}
+                {deletePlan.isPending ? "삭제 중…" : "삭제"}
               </Button>
               <Button
                 variant="outline"
@@ -391,7 +391,7 @@ function CreatePlanForm({
           onClick={() => createPlan.mutate()}
           disabled={createPlan.isPending}
         >
-          {createPlan.isPending ? "생성 중..." : "학습 계획 시작"}
+          {createPlan.isPending ? "생성 중…" : "학습 계획 시작"}
         </Button>
       </CardContent>
     </Card>

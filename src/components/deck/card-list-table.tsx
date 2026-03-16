@@ -143,10 +143,11 @@ export function CardListTable({ deckId }: { deckId: string }) {
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="단어 검색..."
+            placeholder="단어 검색…"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-8"
+            aria-label="단어 검색"
           />
         </div>
         <Select
@@ -236,6 +237,7 @@ export function CardListTable({ deckId }: { deckId: string }) {
                               size="icon"
                               className="h-8 w-8"
                               onClick={(e) => e.stopPropagation()}
+                              aria-label="더 보기"
                             >
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
@@ -291,23 +293,24 @@ export function CardListTable({ deckId }: { deckId: string }) {
                 className="h-8 w-8"
                 disabled={page === 0}
                 onClick={() => setPage((p) => p - 1)}
+                aria-label="이전 페이지"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               {(() => {
                 const total = data.totalPages || 1;
-                const pages: (number | "...")[] = [];
+                const pages: (number | "…")[] = [];
                 if (total <= 7) {
                   for (let i = 0; i < total; i++) pages.push(i);
                 } else {
                   pages.push(0);
-                  if (page > 2) pages.push("...");
+                  if (page > 2) pages.push("…");
                   for (let i = Math.max(1, page - 1); i <= Math.min(total - 2, page + 1); i++) pages.push(i);
-                  if (page < total - 3) pages.push("...");
+                  if (page < total - 3) pages.push("…");
                   pages.push(total - 1);
                 }
                 return pages.map((p, i) =>
-                  p === "..." ? (
+                  p === "…" ? (
                     <span key={`dots-${i}`} className="px-1 text-xs text-muted-foreground">
                       ...
                     </span>
@@ -330,6 +333,7 @@ export function CardListTable({ deckId }: { deckId: string }) {
                 className="h-8 w-8"
                 disabled={page >= data.totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
+                aria-label="다음 페이지"
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>

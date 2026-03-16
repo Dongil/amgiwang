@@ -92,7 +92,7 @@ export function PdfUploader({ deckId, deckType, onParsed }: PdfUploaderProps) {
         <CardContent className="flex flex-col items-center gap-4 p-8">
           <Loader2 className="h-12 w-12 animate-spin text-primary" />
           <div className="text-center">
-            <p className="font-medium">PDF 분석 중...</p>
+            <p className="font-medium">PDF 분석 중…</p>
             <p className="mt-1 text-sm text-muted-foreground">{file?.name}</p>
           </div>
           <Progress value={50} className="w-full" />

@@ -68,7 +68,7 @@ export default function QuizPage({
   return (
     <div className="p-4">
       <div className="mb-4 flex items-center gap-2">
-        <Button asChild variant="ghost" size="icon">
+        <Button asChild variant="ghost" size="icon" aria-label="뒤로 가기">
           <Link href={`/decks/${deckId}`}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
@@ -83,7 +83,7 @@ export default function QuizPage({
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-8">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-              <Brain className="h-8 w-8 text-muted-foreground" />
+              <Brain className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
             </div>
             <div className="text-center">
               <p className="font-medium">카드가 부족합니다</p>

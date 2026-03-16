@@ -23,6 +23,7 @@ export function VocabCardView({
                 e.stopPropagation();
                 onSpeak(card.word);
               }}
+              aria-label="발음 재생"
               className="text-primary hover:text-primary/80"
             >
               <Volume2 className="h-4 w-4" />
