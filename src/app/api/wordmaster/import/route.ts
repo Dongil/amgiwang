@@ -132,11 +132,18 @@ async function insertCards(
         word: d.word,
         meaning: d.meaning,
       })),
-      collocations: entry.collocations.map((c) => ({
-        phrase: c.phrase,
-        meaning: c.meaning,
-        ...(c.source ? { source: c.source } : {}),
-      })),
+      collocations: [
+        ...entry.relatedExpressions.map((r) => ({
+          phrase: r.phrase,
+          meaning: r.meaning,
+          ...(r.source ? { source: r.source } : {}),
+        })),
+        ...entry.collocations.map((c) => ({
+          phrase: c.phrase,
+          meaning: c.meaning,
+          ...(c.source ? { source: c.source } : {}),
+        })),
+      ],
       example_sentence: entry.exampleSentence || null,
       example_translation: entry.exampleTranslation || null,
       etymology_note: entry.etymologyNote || null,

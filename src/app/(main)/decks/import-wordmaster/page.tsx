@@ -339,11 +339,32 @@ export default function ImportWordMasterPage() {
                         </div>
                       )}
 
-                      {/* Collocations */}
+                      {/* 관련 표현 (+ marker) */}
+                      {entry.relatedExpressions.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-medium text-muted-foreground">
+                            관련 표현
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {entry.relatedExpressions.map((r, i) => (
+                              <Badge
+                                key={i}
+                                variant="outline"
+                                className="text-[10px]"
+                              >
+                                {r.phrase} {r.meaning}
+                                {r.source && ` (${r.source})`}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Frequent Collocations */}
                       {entry.collocations.length > 0 && (
                         <div className="space-y-1">
                           <p className="text-[10px] font-medium text-muted-foreground">
-                            Collocations
+                            Frequent Collocations
                           </p>
                           {/* 설명문 (phrase가 빈 항목) */}
                           {entry.collocations

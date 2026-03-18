@@ -24,6 +24,7 @@ export interface WordMasterEntry {
   exampleTranslation: string;
   synonyms: ParsedRelated[];
   antonyms: ParsedRelated[];
+  relatedExpressions: ParsedCollocation[];
   collocations: ParsedCollocation[];
   derivatives: ParsedRelated[];
   etymologyNote?: string;
