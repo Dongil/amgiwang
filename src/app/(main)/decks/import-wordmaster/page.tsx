@@ -263,44 +263,129 @@ export default function ImportWordMasterPage() {
                 </CardContent>
               </Card>
 
-              {/* Sample Preview */}
+              {/* Sample Preview - 전체 필드 표시 */}
               <div className="space-y-3">
                 <p className="text-sm font-medium">미리보기</p>
                 {sample.map((entry) => (
                   <Card key={entry.wordNumber}>
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-[10px]">
-                              #{String(entry.wordNumber).padStart(4, "0")}
-                            </Badge>
-                            <span className="font-medium">{entry.word}</span>
-                          </div>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            {entry.meanings
-                              .map((m) => `${m.pos} ${m.meaning}`)
-                              .join(" / ")}
-                          </p>
-                          {entry.collocations.length > 0 && (
-                            <div className="mt-2 flex flex-wrap gap-1">
-                              {entry.collocations.slice(0, 3).map((c, i) => (
-                                <Badge
-                                  key={i}
-                                  variant="secondary"
-                                  className="text-[10px]"
-                                >
-                                  {c.phrase}
-                                  {c.source && ` (${c.source})`}
-                                </Badge>
-                              ))}
-                            </div>
-                          )}
+                    <CardContent className="space-y-3 p-4">
+                      {/* 헤더: 번호 + 단어 + DAY */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-[10px]">
+                            #{String(entry.wordNumber).padStart(4, "0")}
+                          </Badge>
+                          <span className="text-base font-bold">{entry.word}</span>
                         </div>
                         <Badge variant="outline" className="text-[10px]">
                           DAY {entry.dayNumber}
                         </Badge>
                       </div>
+
+                      {/* 품사 + 뜻 */}
+                      {entry.meanings.length > 0 && (
+                        <div className="text-sm">
+                          {entry.meanings.map((m, i) => (
+                            <span key={i}>
+                              {i > 0 && " / "}
+                              <span className="font-medium text-primary">{m.pos}</span>{" "}
+                              {m.meaning}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 예문 */}
+                      {entry.exampleSentence && (
+                        <div className="rounded-lg bg-muted/50 p-2 text-xs">
+                          <p className="italic">{entry.exampleSentence}</p>
+                          {entry.exampleTranslation && (
+                            <p className="mt-1 text-muted-foreground">
+                              {entry.exampleTranslation}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* 유의어 */}
+                      {entry.synonyms.length > 0 && (
+                        <div className="text-xs">
+                          <span className="font-medium text-blue-600">=</span>{" "}
+                          {entry.synonyms.map((s, i) => (
+                            <span key={i}>
+                              {i > 0 && ", "}
+                              <span className="font-medium">{s.word}</span>
+                              {s.meaning && (
+                                <span className="text-muted-foreground"> {s.meaning}</span>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 반의어 */}
+                      {entry.antonyms.length > 0 && (
+                        <div className="text-xs">
+                          <span className="font-medium text-red-600">↔</span>{" "}
+                          {entry.antonyms.map((a, i) => (
+                            <span key={i}>
+                              {i > 0 && ", "}
+                              <span className="font-medium">{a.word}</span>
+                              {a.meaning && (
+                                <span className="text-muted-foreground"> {a.meaning}</span>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Collocations */}
+                      {entry.collocations.length > 0 && (
+                        <div className="space-y-1">
+                          <p className="text-[10px] font-medium text-muted-foreground">
+                            Collocations
+                          </p>
+                          <div className="flex flex-wrap gap-1">
+                            {entry.collocations.map((c, i) => (
+                              <Badge
+                                key={i}
+                                variant="secondary"
+                                className="text-[10px]"
+                              >
+                                {c.phrase}
+                                {c.meaning && ` ${c.meaning}`}
+                                {c.source && ` (${c.source})`}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 파생어 */}
+                      {entry.derivatives.length > 0 && (
+                        <div className="text-xs">
+                          <span className="font-medium text-muted-foreground">파생어:</span>{" "}
+                          {entry.derivatives.map((d, i) => (
+                            <span key={i}>
+                              {i > 0 && ", "}
+                              <span className="font-medium">{d.word}</span>
+                              {d.pos && (
+                                <span className="text-primary"> {d.pos}</span>
+                              )}
+                              {d.meaning && (
+                                <span className="text-muted-foreground"> {d.meaning}</span>
+                              )}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 어원 */}
+                      {entry.etymologyNote && (
+                        <div className="text-xs text-muted-foreground">
+                          <span className="font-medium">어원:</span> {entry.etymologyNote}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
