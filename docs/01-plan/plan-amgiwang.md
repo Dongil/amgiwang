@@ -1,8 +1,11 @@
-# 암기왕 (AmgiWang) - 기획안 v1.1
+# 암기왕 (AmgiWang) - 기획안 v2.5
 
 > **상태**: 확정
-> **최종 수정**: 2026-02-14
-> **변경 이력**: v1.0 초안 → v1.1 영어단어 전용 시스템, PDF 업로드, 진도 관리 추가
+> **최종 수정**: 2026-03-16
+> **변경 이력**:
+> - v1.0 초안
+> - v1.1 영어단어 전용 시스템, PDF 업로드, 진도 관리 추가
+> - v2.5 덱 공유 시스템 (public/private), UI 리디자인 (에메랄드 그린 OKLCH 테마), 탐색 페이지, 5탭 네비게이션
 
 ---
 
@@ -22,9 +25,9 @@
 
 | 영역 | 기술 | 선택 이유 |
 |------|------|-----------|
-| **프레임워크** | Next.js 14 (App Router, TypeScript) | SSR/SSG, 파일 기반 라우팅, 안정적 |
+| **프레임워크** | Next.js 16 (App Router, TypeScript) | RSC, Turbopack, 최신 React 19 |
 | **DB/Auth** | Supabase (PostgreSQL, Auth, Storage) | RLS, Realtime, 무료 티어 넉넉 |
-| **UI** | Tailwind CSS + shadcn/ui | 빠른 개발, 일관된 디자인 |
+| **UI** | Tailwind CSS v4 + shadcn/ui | OKLCH 컬러, 에메랄드 그린 테마 |
 | **PWA** | next-pwa | 오프라인 지원, 홈 화면 설치 |
 | **TTS** | Web Speech API | 브라우저 내장, 무료 |
 | **AI** | 멀티 프로바이더 (Gemini / OpenAI / Claude) | 사용자가 API키 등록, 선택 사용 |
@@ -43,7 +46,7 @@
 | **AI API** | 멀티 프로바이더 (사용자 API키 등록) | MVP는 Gemini 우선 |
 | **인증** | 이메일 로그인만 (Supabase Auth) | 심플하게 |
 | **게임화** | 풍성하게 (스트릭+XP+뱃지+미션) | 동기부여 극대화 |
-| **공유** | 링크 공유 | 친구에게 덱 공유 가능 |
+| **공유** | public/private 공유 + 탐색/복제 | v2.5: 전체 공유, 비공개 공유(사용자 지정), 덱 탐색/미리보기/복제 |
 | **비용** | 사용자 본인 API키 → 서버 AI 비용 0원 | Route Handler 경유 |
 | **덱 타입** | 영어단어 / 일반과목 분리 | 별도 테이블 (cards + vocab_cards) |
 | **카드 모델** | 분리 테이블 방식 | 영어단어 전용 필드 최적화 |
@@ -250,11 +253,27 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
 - **일일 도전 미션**: "오늘 30장 복습하기", "퀴즈 5회 도전" 등
 - **대시보드 꾸미기**: 레벨에 따라 프로필 테마 해금
 
-### 11. 덱 링크 공유
+### 11. 덱 공유 시스템 (v2.5 대폭 개선)
 
-- **공유 링크 생성**: 덱을 읽기 전용 링크로 공유
-- **복사 가져오기**: 공유받은 덱을 내 계정으로 복사
-- **공유 설정**: 링크 비활성화/활성화 토글
+#### 공유 모드 (3단계)
+- **none**: 비공유 (기본값)
+- **public**: 전체 공유 — 탐색 페이지에 노출, 누구나 복제 가능
+- **private**: 비공개 공유 — 지정한 사용자만 덱에 접근 가능 (최대 20명)
+
+#### 공유 기능
+- **ShareDialog**: 공유 모드 전환 + 비공개 사용자 검색/추가/삭제
+- **nanoid 기반 share_id**: 공유 링크용 짧은 ID 자동 생성
+- **deck_shares 테이블**: 비공개 공유 대상 사용자 관리
+
+#### 탐색 & 복제 (v2.5 신규)
+- **Explore 페이지**: 공유된 덱 검색, 타입 필터, 정렬 (최신/인기/카드수)
+- **Preview 페이지**: 덱 정보 + 카드 미리보기 (최대 10장) + 복제 버튼
+- **Clone API**: 덱 + 카드 전체 복제 (최대 500장), 중복 복제 방지
+- **import_count**: 복제 횟수 표시
+
+#### 덱 목록 탭
+- **[내 덱] / [공유받은 덱]**: 소유 덱과 복제해온 덱 분리 표시
+- source_deck_id 기반 필터링
 
 ### 12. PWA 특화 기능
 
@@ -269,7 +288,7 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
 ```
  암기왕 화면 구조
 
-[Bottom Navigation: 홈 | 덱 | 학습 | 통계 | 설정]
+[Bottom Navigation: 홈 | 덱 | 탐색 | 통계 | 설정]    ← v2.5: 5탭 (탐색 추가)
 
 1. 홈 (대시보드)
    ├── 오늘의 학습 진도 (일일 분량 진행률 바)
@@ -281,9 +300,10 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
    └── 주간 학습 히트맵
 
 2. 덱 관리
-   ├── 타입별 탭 [영어단어 | 일반과목]
+   ├── 소유 탭 [내 덱 | 공유받은 덱]                     ← v2.5
+   ├── 타입별 탭 [전체 | 영어단어 | 일반과목]
    ├── 과목별 필터 (전체/국어/영어/수학/...)
-   ├── 덱 카드 (제목, 카드수, 진도율, Day 진행)
+   ├── 덱 카드 (제목, 카드수, 진도율, 공유 뱃지)
    ├── + 새 덱 만들기
    │   ├── 덱 타입 선택 (영어단어 / 일반과목)
    │   ├── PDF 업로드 → AI 카드 생성
@@ -293,8 +313,19 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
    ├── 덱 상세
    │   ├── 카드 목록/편집
    │   ├── 학습 계획 설정 (일일 분량, 기간)
-   │   └── 진도 현황 (Day별 진행률)
-   └── 공유 링크 관리
+   │   ├── 진도 현황 (Day별 진행률)
+   │   └── 공유 설정 (ShareDialog)                       ← v2.5
+   └── 공유 모드 관리 (none/public/private)               ← v2.5
+
+2.5. 탐색 (Explore)                                       ← v2.5 신규
+   ├── 검색바 (덱 이름/과목 검색)
+   ├── 타입 필터 [전체 | 영어단어 | 일반과목]
+   ├── 정렬 (최신순 / 인기순 / 카드 많은순)
+   ├── 공유 덱 카드 리스트 (제목, 소유자, 카드수, 복제수)
+   └── 덱 미리보기 (Preview)
+       ├── 덱 정보 (제목, 소유자, 과목, 카드수, 복제수)
+       ├── 카드 미리보기 (최대 10장)
+       └── [내 덱에 추가] 복제 버튼
 
 3. 학습 모드 (덱 선택 후)
    ├── 오늘의 분량 표시 (Day N: XX장)
@@ -365,7 +396,7 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
 - updated_at: timestamptz
 ```
 
-### decks (덱/카드묶음) - v1.1 수정
+### decks (덱/카드묶음) - v2.5 수정
 ```sql
 - id: uuid (PK)
 - user_id: uuid (FK → profiles)
@@ -376,10 +407,22 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
 - color: text (덱 색상 코드)
 - card_count: int (카드 수, 캐시)
 - mastered_count: int (암기 완료 카드 수, 캐시)
-- share_id: text (unique, nullable, 공유용 짧은 ID)
-- is_shared: boolean (default: false)
+- share_id: text (unique, nullable, nanoid(12) 공유용 짧은 ID)
+- share_mode: text ('none' | 'public' | 'private', default: 'none')  ← v2.5
+- import_count: int (복제 횟수, default: 0)                            ← v2.5
+- source_deck_id: uuid (nullable, 복제 원본 덱 ID)                     ← v2.5
+- source_user_id: uuid (nullable, 복제 원본 소유자 ID)                  ← v2.5
 - created_at: timestamptz
 - updated_at: timestamptz
+```
+
+### deck_shares (비공개 공유 대상) - v2.5 신규
+```sql
+- id: uuid (PK)
+- deck_id: uuid (FK → decks)
+- shared_with_id: uuid (FK → profiles)
+- created_at: timestamptz
+- UNIQUE(deck_id, shared_with_id)
 ```
 
 ### cards (일반과목 암기 카드) - 기존 유지
@@ -546,8 +589,10 @@ PDF 업로드 → 텍스트 추출 (pdf-parse)
 profiles (1) ──┬── (N) decks ──┬── (N) cards          [일반과목]
                │               ├── (N) vocab_cards     [영어단어]
                │               ├── (N) pdf_uploads
+               │               ├── (N) deck_shares     [v2.5 비공개 공유]
                │               └── (1) study_plans ── (N) daily_progress
                │
+               ├── (N) deck_shares (shared_with_id)    [v2.5 공유받은]
                ├── (N) study_records
                ├── (N) quiz_results
                ├── (N) ai_conversations
@@ -563,9 +608,9 @@ profiles (1) ──┬── (N) decks ──┬── (N) cards          [일�
 
 | 프로바이더 | 모델 | 특징 |
 |-----------|------|------|
-| **Gemini** (MVP 기본) | gemini-2.0-flash | 무료 티어 넉넉, 빠른 응답, PDF 멀티모달 |
+| **Gemini** (기본) | gemini-2.0-flash | 무료 티어 넉넉, 빠른 응답, PDF 멀티모달 |
 | **OpenAI** | gpt-4o-mini | 가성비 좋음, 안정적 |
-| **Claude** | claude-sonnet-4-5 | 심층 분석/설명에 강점 |
+| **Claude** | claude-sonnet-4-6 | 심층 분석/설명에 강점 |
 
 ### API키 관리
 - 사용자가 설정에서 직접 API키 입력
@@ -589,85 +634,102 @@ profiles (1) ──┬── (N) decks ──┬── (N) cards          [일�
 
 ---
 
-## 개발 우선순위 (Phase) - v1.1 수정
+## 개발 우선순위 (Phase) - v2.5 수정
 
-### Phase 1 - MVP (핵심 기능) -- 우선 구현
+### Phase 1 - MVP (핵심 기능) ✅ 완료
 
-| # | 기능 | 세부 | 변경 |
-|---|------|------|------|
-| 1 | 프로젝트 셋업 | Next.js 14 + Supabase + Tailwind + shadcn/ui + PWA | 기존 |
-| 2 | 인증 | 이메일 회원가입/로그인 (Supabase Auth) | 기존 |
-| 3 | 덱 CRUD | 덱 생성(타입 선택)/조회/수정/삭제 + 과목 분류 | **수정** |
-| 4 | 일반 카드 CRUD | cards 테이블 - 앞/뒤 카드 생성/편집/삭제 | 기존 |
-| 5 | 영어단어 카드 CRUD | vocab_cards 테이블 - 전용 입력 폼 | **신규** |
-| 6 | PDF 업로드 | PDF 업로드 → Supabase Storage 저장 → 텍스트 추출 | **신규** |
-| 7 | 플래시카드 학습 | 일반 카드 넘기기 + 영어단어 전용 카드 UI | **수정** |
-| 8 | SM-2 간격 반복 | 복습 스케줄링 + 오늘의 복습 (두 카드타입 모두) | **수정** |
-| 9 | 학습 계획 & 진도 | 일일 분량 설정 + Day별 진도 추적 | **신규** |
-| 10 | 기본 대시보드 | 오늘 진도, 복습 카드 수, 최근 덱 | **수정** |
+| # | 기능 | 세부 | 상태 |
+|---|------|------|:----:|
+| 1 | 프로젝트 셋업 | Next.js 16 + Supabase + Tailwind v4 + shadcn/ui + PWA | ✅ |
+| 2 | 인증 | 이메일 회원가입/로그인 (Supabase Auth) | ✅ |
+| 3 | 덱 CRUD | 덱 생성(타입 선택)/조회/수정/삭제 + 과목 분류 | ✅ |
+| 4 | 일반 카드 CRUD | cards 테이블 - 앞/뒤 카드 생성/편집/삭제 | ✅ |
+| 5 | 영어단어 카드 CRUD | vocab_cards 테이블 - 전용 입력 폼 | ✅ |
+| 6 | PDF 업로드 | PDF 업로드 → 텍스트 추출 → AI 카드 생성 | ✅ |
+| 7 | 플래시카드 학습 | 일반 카드 넘기기 + 영어단어 전용 카드 UI | ✅ |
+| 8 | SM-2 간격 반복 | 복습 스케줄링 + 오늘의 복습 (두 카드타입 모두) | ✅ |
+| 9 | 학습 계획 & 진도 | 일일 분량 설정 + Day별 진도 추적 | ✅ |
+| 10 | 기본 대시보드 | 오늘 진도, 복습 카드 수, 최근 덱 | ✅ |
 
-### Phase 2 - AI & 퀴즈
+### Phase 2 - AI & 퀴즈 ✅ 완료
 
-| # | 기능 | 세부 | 변경 |
-|---|------|------|------|
-| 11 | AI 설정 | API키 등록, 프로바이더 선택 (Gemini 기본) | 기존 |
-| 12 | AI 카드 생성 | PDF/텍스트 → AI → 카드 자동 생성 (일반+영어) | **수정** |
-| 13 | AI 영어 보강 | 어원 분석 + 니모닉 자동 생성 | **신규** |
-| 14 | 일반 퀴즈 | 객관식, O/X + AI 보기 생성 (범위 지정 가능) | **수정** |
-| 15 | 영어 퀴즈 | 영→한, 한→영, 예문 빈칸, 발음 퀴즈 | **신규** |
-| 16 | TTS 음성 학습 | Web Speech API + 속도 조절 + 영어 발음 | 기존 |
-| 17 | 학습 통계 | 그래프, 암기율, 과목별 진도, 영어 전용 통계 | **수정** |
+| # | 기능 | 세부 | 상태 |
+|---|------|------|:----:|
+| 11 | AI 설정 | API키 등록, 멀티 프로바이더 선택 (Gemini/OpenAI/Claude) | ✅ |
+| 12 | AI 카드 생성 | PDF/텍스트 → AI → 카드 자동 생성 (일반+영어) | ✅ |
+| 13 | AI 영어 보강 | 어원 분석 + 니모닉 자동 생성 | ✅ |
+| 14 | 일반 퀴즈 | 객관식 + AI 보기 생성 (카드형 선택지 UI) | ✅ |
+| 15 | 영어 퀴즈 | 영→한, 한→영, 예문 빈칸, 발음 퀴즈 | ✅ |
+| 16 | TTS 음성 학습 | Web Speech API + 속도 조절 + 영어 발음 | ✅ |
+| 17 | 학습 통계 | 플레이스홀더 (그래프 미구현) | ⏳ |
+
+### Phase 2.5 - 덱 공유 & UI 리디자인 ✅ 완료 (v2.5 신규)
+
+| # | 기능 | 세부 | 상태 |
+|---|------|------|:----:|
+| A | UI 리디자인 | OKLCH 에메랄드 그린 팔레트, p-5/space-y-5 스페이싱 | ✅ |
+| B | 로그인/회원가입 | 풀스크린 레이아웃, h-12 rounded-xl 인풋/버튼 | ✅ |
+| C | 퀴즈 UI | 카드형 선택지 (rounded-xl border-2), 원형 번호 뱃지 | ✅ |
+| D | 5탭 네비게이션 | 홈/덱/탐색/통계/설정 + active dot indicator | ✅ |
+| E | 덱 공유 시스템 | ShareDialog (none/public/private), 사용자 검색 | ✅ |
+| F | 탐색 페이지 | 검색/타입필터/정렬, 공유 덱 목록 | ✅ |
+| G | 미리보기 & 복제 | Preview 페이지, Clone API (500장 제한) | ✅ |
+| H | 공유받은 덱 탭 | [내 덱] / [공유받은 덱] 분리 | ✅ |
+| I | DB 마이그레이션 | deck_shares, share_mode, RLS, indexes | ✅ |
+| J | 6 API routes | share, share/users, users/search, clone, explore, preview | ✅ |
 
 ### Phase 3 - AI 심화 & 게임화
 
-| # | 기능 | 세부 |
-|---|------|------|
-| 18 | AI 심층 질문 | 대화형 챗봇, 소크라테스식 질문 |
-| 19 | AI 오답 분석 | 틀린 문제 설명 + 관련 개념 추천 |
-| 20 | 빈칸/주관식 퀴즈 | AI 채점 + 피드백 |
-| 21 | XP & 레벨 시스템 | 포인트 획득, 레벨업 |
-| 22 | 뱃지/업적 | 조건 달성 시 뱃지 획득 |
-| 23 | 일일 미션 | 매일 랜덤 미션 생성 |
+| # | 기능 | 세부 | 상태 |
+|---|------|------|:----:|
+| 18 | AI 심층 질문 | 대화형 챗봇, 소크라테스식 질문 | ⏳ |
+| 19 | AI 오답 분석 | 틀린 문제 설명 + 관련 개념 추천 | ⏳ |
+| 20 | 빈칸/주관식 퀴즈 | AI 채점 + 피드백 | ⏳ |
+| 21 | XP & 레벨 시스템 | 포인트 획득, 레벨업 | ⏳ |
+| 22 | 뱃지/업적 | 조건 달성 시 뱃지 획득 | ⏳ |
+| 23 | 일일 미션 | 매일 랜덤 미션 생성 | ⏳ |
 
 ### Phase 4 - 완성도 & 수능 연계
 
-| # | 기능 | 세부 | 변경 |
-|---|------|------|------|
-| 24 | 수능 기출 연계 | 단어별 기출 지문 연결, 지문 내 하이라이트 | **신규** |
-| 25 | 덱 링크 공유 | 공유 링크 생성/복사 가져오기 | 기존 |
-| 26 | 오프라인 학습 | Service Worker 카드 캐싱 | 기존 |
-| 27 | 푸시 알림 | 복습 리마인더 | 기존 |
-| 28 | 대량 입력 | CSV/텍스트 일괄 카드 생성 | 기존 |
-| 29 | 다크 모드 | 시스템 연동 + 수동 토글 | 기존 |
-| 30 | 데이터 내보내기 | JSON/CSV 내보내기/가져오기 | 기존 |
-| 31 | 이미지 첨부 | Supabase Storage 카드 이미지 | 기존 |
+| # | 기능 | 세부 | 상태 |
+|---|------|------|:----:|
+| 24 | 수능 기출 연계 | 단어별 기출 지문 연결, 지문 내 하이라이트 | ⏳ |
+| 25 | 오프라인 학습 | Service Worker 카드 캐싱 | ⏳ |
+| 26 | 푸시 알림 | 복습 리마인더 | ⏳ |
+| 27 | 대량 입력 | CSV/텍스트 일괄 카드 생성 | ⏳ |
+| 28 | 다크 모드 | 시스템 연동 + 수동 토글 (CSS 변수 준비 완료) | ⏳ |
+| 29 | 데이터 내보내기 | JSON/CSV 내보내기/가져오기 | ⏳ |
+| 30 | 이미지 첨부 | Supabase Storage 카드 이미지 | ⏳ |
 
 ---
 
-## 프로젝트 구조 (v1.1 수정)
+## 프로젝트 구조 (v2.5 수정)
 
 ```
 amgiwang/
 ├── src/
 │   ├── app/
 │   │   ├── (auth)/
-│   │   │   ├── login/page.tsx
-│   │   │   └── signup/page.tsx
+│   │   │   ├── login/page.tsx          (풀스크린 로그인)      ← v2.5 리디자인
+│   │   │   └── signup/page.tsx         (풀스크린 회원가입)    ← v2.5 리디자인
 │   │   ├── (main)/
-│   │   │   ├── layout.tsx              (Bottom Nav 포함)
+│   │   │   ├── layout.tsx              (Bottom Nav 5탭)      ← v2.5 수정
 │   │   │   ├── page.tsx                (대시보드/홈)
 │   │   │   ├── decks/
-│   │   │   │   ├── page.tsx            (덱 목록 - 타입별 탭)
+│   │   │   │   ├── page.tsx            (덱 목록 - 내 덱/공유받은 덱 탭)  ← v2.5
 │   │   │   │   ├── new/page.tsx        (덱 생성 - 타입 선택)
 │   │   │   │   └── [id]/
-│   │   │   │       ├── page.tsx        (덱 상세/카드 목록)
+│   │   │   │       ├── page.tsx        (덱 상세 + 공유 버튼)  ← v2.5
 │   │   │   │       ├── edit/page.tsx
 │   │   │   │       ├── cards/new/page.tsx      (카드 추가)
-│   │   │   │       ├── upload-pdf/page.tsx     (PDF 업로드)  ← v1.1
-│   │   │   │       ├── study-plan/page.tsx     (학습 계획)   ← v1.1
+│   │   │   │       ├── upload-pdf/page.tsx     (PDF 업로드)
+│   │   │   │       ├── study-plan/page.tsx     (학습 계획)
 │   │   │   │       ├── study/page.tsx          (학습 모드)
 │   │   │   │       ├── quiz/page.tsx           (퀴즈 모드)
 │   │   │   │       └── ai-chat/page.tsx        (AI 심층 질문)
+│   │   │   ├── explore/                                       ← v2.5 신규
+│   │   │   │   ├── page.tsx            (탐색 - 검색/필터/정렬)
+│   │   │   │   └── [deckId]/page.tsx   (미리보기 + 복제)
 │   │   │   ├── stats/page.tsx          (통계)
 │   │   │   └── settings/
 │   │   │       ├── page.tsx            (설정 메인)
@@ -675,15 +737,21 @@ amgiwang/
 │   │   ├── api/
 │   │   │   ├── ai/
 │   │   │   │   ├── generate-cards/route.ts       (일반 카드 생성)
-│   │   │   │   ├── generate-vocab/route.ts       (영어단어 생성)  ← v1.1
-│   │   │   │   ├── generate-etymology/route.ts   (어원 분석)     ← v1.1
-│   │   │   │   ├── generate-mnemonic/route.ts    (니모닉 생성)   ← v1.1
+│   │   │   │   ├── generate-vocab/route.ts       (영어단어 생성)
+│   │   │   │   ├── generate-etymology/route.ts   (어원 분석)
+│   │   │   │   ├── generate-mnemonic/route.ts    (니모닉 생성)
 │   │   │   │   ├── generate-quiz/route.ts
-│   │   │   │   ├── chat/route.ts
-│   │   │   │   └── analyze/route.ts
+│   │   │   │   ├── validate-key/route.ts         (API키 검증)
+│   │   │   │   └── chat/route.ts
+│   │   │   ├── decks/                                          ← v2.5 신규
+│   │   │   │   ├── [id]/share/route.ts           (PUT 공유 모드)
+│   │   │   │   ├── [id]/share/users/route.ts     (GET/POST/DELETE 공유 사용자)
+│   │   │   │   ├── [id]/clone/route.ts           (POST 덱 복제)
+│   │   │   │   ├── [id]/preview/route.ts         (GET 미리보기)
+│   │   │   │   └── explore/route.ts              (GET 탐색 목록)
+│   │   │   ├── users/search/route.ts             (GET 사용자 검색) ← v2.5
 │   │   │   └── pdf/
-│   │   │       └── parse/route.ts                (PDF 파싱)     ← v1.1
-│   │   ├── share/[shareId]/page.tsx
+│   │   │       └── parse/route.ts                (PDF 파싱)
 │   │   ├── layout.tsx
 │   │   └── manifest.ts
 │   │
@@ -692,11 +760,13 @@ amgiwang/
 │   │   ├── auth/
 │   │   ├── deck/
 │   │   │   ├── deck-list.tsx
-│   │   │   ├── deck-card.tsx
-│   │   │   └── deck-type-selector.tsx   ← v1.1
+│   │   │   ├── deck-card.tsx            (공유 뱃지 표시)   ← v2.5
+│   │   │   ├── deck-type-selector.tsx
+│   │   │   ├── card-list-table.tsx
+│   │   │   └── share-dialog.tsx         (공유 설정 다이얼로그) ← v2.5 신규
 │   │   ├── card/
 │   │   │   ├── general-card-form.tsx    (일반 카드 입력)
-│   │   │   └── vocab-card-form.tsx      (영어단어 입력)  ← v1.1
+│   │   │   └── vocab-card-form.tsx      (영어단어 입력)
 │   │   ├── study/
 │   │   │   ├── flashcard.tsx            (일반 플래시카드)
 │   │   │   ├── vocab-flashcard.tsx      (영어단어 카드)  ← v1.1

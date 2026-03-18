@@ -85,6 +85,12 @@ export interface VocabRelated {
   meaning: string;
 }
 
+export interface VocabCollocation {
+  phrase: string;
+  meaning: string;
+  source?: string;
+}
+
 export interface VocabCard {
   id: string;
   deck_id: string;
@@ -102,6 +108,10 @@ export interface VocabCard {
   etymology_note: string | null;
   mnemonic: string | null;
   mnemonic_user: string | null;
+  collocations: VocabCollocation[];
+  word_number: number | null;
+  day_number: number | null;
+  source_book: string | null;
   tips: string | null;
   difficulty_level: number;
   tags: string[];

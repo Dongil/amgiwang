@@ -20,9 +20,12 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     try {
+      console.log("[Login] signIn start...");
       await signIn(email, password);
-      router.push("/");
+      console.log("[Login] signIn done, redirecting...");
+      window.location.href = "/";
     } catch (error) {
+      console.error("[Login] error:", error);
       toast.error("로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.");
     }
   }
