@@ -6,7 +6,6 @@ import type {
   ParseResult,
 } from "./types";
 import {
-  SOURCE_BOOK,
   MAX_WORD_NUMBER,
   SOURCE_TAGS,
   dayForWordNumber,
@@ -56,6 +55,20 @@ function extractWordPositions(
   return positions;
 }
 
+/**
+ * 단어가 base word의 파생어인지 판별
+ * e.g., "struggling" → "struggle" 파생, "guilty" → "innocent" 파생 아님
+ */
+function isDerivedFrom(candidate: string, baseWord: string): boolean {
+  const base = baseWord.toLowerCase().replace(/e$/, "");
+  const cand = candidate.toLowerCase();
+  // 공통 stem이 3자 이상이면 파생어
+  return (
+    cand.startsWith(base) ||
+    base.startsWith(cand.slice(0, Math.max(3, cand.length - 3)))
+  );
+}
+
 function parseWordBlock(
   block: string,
   wordNumber: number,
@@ -77,12 +90,13 @@ function parseWordBlock(
   let inCollocationBlock = false;
   let inRelatedBlock = false;
   let inDerivativeBlock = false;
+  let hadSynonyms = false;
+  let hadAntonyms = false;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     if (!line) continue;
 
-    // Skip word number + word lines
     if (!foundWord) {
       if (line === word || line.includes(word)) foundWord = true;
       continue;
@@ -94,7 +108,7 @@ function parseWordBlock(
     if (/^DAY\s*$/.test(line)) break;
     if (/^\d{2}$/.test(line) && lines[i - 1]?.match(/^DAY$/)) break;
 
-    // === Part of speech + meaning (첫 번째만) ===
+    // === Part of speech + meaning ===
     if (
       meanings.length === 0 &&
       /^(n|v|a|ad)\s/.test(line) &&
@@ -104,20 +118,18 @@ function parseWordBlock(
       continue;
     }
 
-    // === Synonym (= marker or ⊜ or similar) ===
+    // === Synonym (= marker) ===
     if (line.startsWith("=") || line.startsWith("⊜")) {
       const parsed = parseSynonymLine(line);
       if (parsed.length > 0) synonyms.push(...parsed);
+      hadSynonyms = true;
       inCollocationBlock = false;
       inRelatedBlock = false;
       inDerivativeBlock = false;
       continue;
     }
 
-    // === Antonym (↔ ⇔ or various PDF symbols) ===
-    // pdfjs may extract ↔ as different chars. Check for common patterns:
-    // - explicit ↔ ⇔ characters
-    // - line that starts with a word + pos + Korean AND appears right after synonyms
+    // === Explicit antonym markers ===
     if (
       line.startsWith("↔") ||
       line.startsWith("⇔") ||
@@ -129,28 +141,11 @@ function parseWordBlock(
         line.replace(/^[↔⇔⬌\u21D4\u2194]\s*/, "")
       );
       if (parsed) antonyms.push(parsed);
+      hadAntonyms = true;
       inCollocationBlock = false;
       inRelatedBlock = false;
       inDerivativeBlock = false;
       continue;
-    }
-
-    // Antonym without marker: right after synonym line, has word + pos + Korean
-    // PDF uses a special symbol that pdfjs may drop entirely
-    if (
-      synonyms.length > 0 &&
-      antonyms.length === 0 &&
-      !inDerivativeBlock &&
-      !inRelatedBlock &&
-      !inCollocationBlock &&
-      /^[a-z][\w-]*\s+(n|v|a|ad)\s+[\uAC00-\uD7AF]/.test(line) &&
-      !isDerivativeLine(line)
-    ) {
-      const parsed = parseRelatedLine(line);
-      if (parsed) {
-        antonyms.push(parsed);
-        continue;
-      }
     }
 
     // === Related expressions (+ marker) ===
@@ -163,15 +158,30 @@ function parseWordBlock(
       continue;
     }
 
-    // + continuation lines (no + prefix, but same pattern: English phrase + Korean)
+    // + continuation: 관련 표현은 base word를 포함하는 구문만
     if (inRelatedBlock) {
-      const expr = parseExpressionLine(line);
-      if (expr) {
-        relatedExpressions.push(expr);
-        continue;
-      } else {
-        inRelatedBlock = false;
+      // 영어 구문 + 한국어 뜻 패턴
+      const match = line.match(/^([a-zA-Z][\w\s'-]+?)\s+([\uAC00-\uD7AF~].+)/);
+      if (match) {
+        const phrase = match[1].trim();
+        const firstWord = phrase.split(/\s/)[0].toLowerCase();
+        // base word를 포함하면 관련 표현, 아니면 블록 종료
+        if (phrase.toLowerCase().includes(word.toLowerCase())) {
+          relatedExpressions.push({
+            phrase,
+            meaning: match[2].trim(),
+          });
+          continue;
+        }
+        // base word 파생어이면 → 파생어 블록으로 전환
+        if (isDerivedFrom(firstWord, word)) {
+          inRelatedBlock = false;
+          inDerivativeBlock = true;
+          parseDerivativeLine(line, derivatives);
+          continue;
+        }
       }
+      inRelatedBlock = false;
     }
 
     // === Frequent Collocations block ===
@@ -193,16 +203,41 @@ function parseWordBlock(
       }
     }
 
-    // === Derivative ===
-    if (isDerivativeLine(line)) {
+    // === 단어 + 품사 + 한국어 패턴 (파생어 또는 반의어 판별) ===
+    const wordPosMatch = line.match(
+      /^([a-z][\w-]*)\s+(n|v|a|ad)\s+([\uAC00-\uD7AF].+)/
+    );
+    if (wordPosMatch) {
+      const candidateWord = wordPosMatch[1].trim();
+
+      // base word와 관련 있으면 → 파생어
+      if (isDerivedFrom(candidateWord, word)) {
+        inDerivativeBlock = true;
+        inRelatedBlock = false;
+        parseDerivativeLine(line, derivatives);
+        continue;
+      }
+
+      // base word와 무관하고, 유의어 이후 아직 반의어 없으면 → 반의어
+      if (hadSynonyms && !hadAntonyms) {
+        antonyms.push({
+          word: candidateWord,
+          pos: wordPosMatch[2],
+          meaning: wordPosMatch[3].trim(),
+        });
+        hadAntonyms = true;
+        continue;
+      }
+
+      // 그 외 → 파생어로 처리
       inDerivativeBlock = true;
-      inRelatedBlock = false;
       parseDerivativeLine(line, derivatives);
       continue;
     }
 
-    // Derivative continuation
+    // === Derivative continuation ===
     if (inDerivativeBlock && derivatives.length > 0) {
+      // 품사+뜻 continuation: "v 이익을 얻다,"
       if (/^(n|v|a|ad)\s+[\uAC00-\uD7AF]/.test(line)) {
         const posMatch = line.match(/^(n|v|a|ad)\s+(.*)/);
         if (posMatch) {
@@ -211,6 +246,7 @@ function parseWordBlock(
         }
         continue;
       }
+      // 한국어만 있는 줄 → 이전 파생어 뜻에 이어붙이기
       if (
         /^[\uAC00-\uD7AF]/.test(line) &&
         !/^[\uAC00-\uD7AF].*[A-Za-z]/.test(line) &&
@@ -310,13 +346,7 @@ function parseRelatedLine(line: string): ParsedRelated | null {
   return null;
 }
 
-/**
- * + 관련 표현 / continuation 줄 파싱
- * "struggle to ~하기 위해 애쓰다"
- * "struggle with ~으로 고심하다"
- */
 function parseExpressionLine(line: string): ParsedCollocation | null {
-  // Check for source tag
   let source: string | undefined;
   let cleaned = line;
   for (const tag of SOURCE_TAGS) {
@@ -326,40 +356,27 @@ function parseExpressionLine(line: string): ParsedCollocation | null {
       break;
     }
   }
-
-  // English phrase + Korean meaning (separated by space before Korean)
-  const match = cleaned.match(
-    /^([a-zA-Z][\w\s'-]+?)\s+([\uAC00-\uD7AF~].+)/
-  );
-  if (match) {
+  const match = cleaned.match(/^([a-zA-Z][\w\s'-]+?)\s+([\uAC00-\uD7AF~].+)/);
+  if (match)
     return { phrase: match[1].trim(), meaning: match[2].trim(), source };
-  }
-
-  // English-only expression (e.g., "reappoint v 재임명하다")
-  const match2 = cleaned.match(/^([a-zA-Z][\w\s'-]+)\s+(n|v|a|ad)\s+([\uAC00-\uD7AF].+)/);
-  if (match2) {
+  const match2 = cleaned.match(
+    /^([a-zA-Z][\w\s'-]+)\s+(n|v|a|ad)\s+([\uAC00-\uD7AF].+)/
+  );
+  if (match2)
     return {
       phrase: match2[1].trim(),
       meaning: `${match2[2]} ${match2[3].trim()}`,
       source,
     };
-  }
-
   return null;
-}
-
-function isDerivativeLine(line: string): boolean {
-  return /^[a-z][\w]*(?:ly|ment|tion|sion|ness|ity|ance|ence|ous|ive|al|ful|less|able|ible|er|or|ist|ism|ize|ise|ate|ent|ant|ing|ed|es|en|ic|ical)?\s+(n|v|a|ad)\s+[\uAC00-\uD7AF]/.test(
-    line
-  );
 }
 
 function parseDerivativeLine(line: string, out: ParsedRelated[]): void {
   const wordMatch = line.match(/^([a-zA-Z][\w]*)\s+(.*)/);
   if (!wordMatch) return;
-  const word = wordMatch[1].trim();
+  const derivWord = wordMatch[1].trim();
   const meaning = wordMatch[2].trim().replace(/,$/, "");
-  if (meaning) out.push({ word, meaning });
+  if (meaning) out.push({ word: derivWord, meaning });
 }
 
 function parseInlineCollocation(line: string): ParsedCollocation | null {
@@ -373,9 +390,8 @@ function parseInlineCollocation(line: string): ParsedCollocation | null {
     }
   }
   const match = cleaned.match(/^([a-zA-Z][\w\s'-]+?)\s+([\uAC00-\uD7AF].+)/);
-  if (match) {
+  if (match)
     return { phrase: match[1].trim(), meaning: match[2].trim(), source };
-  }
   return null;
 }
 
@@ -388,11 +404,8 @@ function collectSentence(lines: string[], startIdx: number): string {
     if (/^(n|v|a|ad)\s/.test(next)) break;
     if (/^[=+↔⇔⊜]/.test(next)) break;
     if (/^\d{4}$/.test(next)) break;
-    if (/^[A-Za-z]/.test(next)) {
-      sentence += " " + next;
-    } else {
-      break;
-    }
+    if (/^[A-Za-z]/.test(next)) sentence += " " + next;
+    else break;
   }
   return sentence.replace(/\s+/g, " ").trim();
 }
