@@ -56,12 +56,27 @@ export default function ImportWordMasterPage() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = `${PDFJS_CDN}/pdf.worker.min.mjs`;
 
       const arrayBuf = await file.arrayBuffer();
-      const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+      const pdfDoc = await pdfjsLib.getDocument({
+        data: arrayBuf,
+        cMapUrl: `${PDFJS_CDN}/cmaps/`,
+        cMapPacked: true,
+      }).promise;
       let fullText = "";
       for (let i = 1; i <= pdfDoc.numPages; i++) {
         const page = await pdfDoc.getPage(i);
         const content = await page.getTextContent();
-        fullText += content.items.map((item: { str?: string }) => item.str || "").join("") + "\n";
+        // 줄바꿈 복원: y좌표가 다르면 새 줄로 처리
+        let lastY: number | null = null;
+        for (const item of content.items) {
+          const ti = item as { str?: string; transform?: number[] };
+          const y = ti.transform?.[5] ?? 0;
+          if (lastY !== null && Math.abs(y - lastY) > 3) {
+            fullText += "\n";
+          }
+          fullText += ti.str || "";
+          lastY = y;
+        }
+        fullText += "\n";
       }
       console.log("[WM] Extracted text length:", fullText.length);
 
