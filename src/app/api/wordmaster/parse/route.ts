@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       totalDays: result.totalDays,
       totalWords: result.totalWords,
-      sample: result.entries.slice(0, 5),
+      sample: result.entries.filter((e) => e.dayNumber === 1),
       errors: result.errors.slice(0, 20),
       entries: result.entries,
     });

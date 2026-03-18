@@ -149,6 +149,8 @@ function parseWordBlock(
     if (line.includes("어구로 자주 쓰인다") || line.includes("자주 쓰이는")) {
       inCollocationBlock = true;
       inDerivativeBlock = false;
+      // 설명문 자체를 collocation description으로 저장
+      collocations.push({ phrase: "", meaning: line, source: undefined });
       continue;
     }
 

@@ -265,7 +265,7 @@ export default function ImportWordMasterPage() {
 
               {/* Sample Preview - 전체 필드 표시 */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">미리보기</p>
+                <p className="text-sm font-medium">미리보기 (DAY 1)</p>
                 {sample.map((entry) => (
                   <Card key={entry.wordNumber}>
                     <CardContent className="space-y-3 p-4">
@@ -345,18 +345,28 @@ export default function ImportWordMasterPage() {
                           <p className="text-[10px] font-medium text-muted-foreground">
                             Collocations
                           </p>
-                          <div className="flex flex-wrap gap-1">
-                            {entry.collocations.map((c, i) => (
-                              <Badge
-                                key={i}
-                                variant="secondary"
-                                className="text-[10px]"
-                              >
-                                {c.phrase}
-                                {c.meaning && ` ${c.meaning}`}
-                                {c.source && ` (${c.source})`}
-                              </Badge>
+                          {/* 설명문 (phrase가 빈 항목) */}
+                          {entry.collocations
+                            .filter((c) => !c.phrase && c.meaning)
+                            .map((c, i) => (
+                              <p key={`desc-${i}`} className="text-[11px] text-muted-foreground italic">
+                                {c.meaning}
+                              </p>
                             ))}
+                          <div className="flex flex-wrap gap-1">
+                            {entry.collocations
+                              .filter((c) => c.phrase)
+                              .map((c, i) => (
+                                <Badge
+                                  key={i}
+                                  variant="secondary"
+                                  className="text-[10px]"
+                                >
+                                  {c.phrase}
+                                  {c.meaning && ` ${c.meaning}`}
+                                  {c.source && ` (${c.source})`}
+                                </Badge>
+                              ))}
                           </div>
                         </div>
                       )}
