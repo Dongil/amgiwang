@@ -56,11 +56,7 @@ export default function ImportWordMasterPage() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = `${PDFJS_CDN}/pdf.worker.min.mjs`;
 
       const arrayBuf = await file.arrayBuffer();
-      const pdfDoc = await pdfjsLib.getDocument({
-        data: arrayBuf,
-        cMapUrl: `${PDFJS_CDN}/cmaps/`,
-        cMapPacked: true,
-      }).promise;
+      const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
       let fullText = "";
       for (let i = 1; i <= pdfDoc.numPages; i++) {
         const page = await pdfDoc.getPage(i);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { SOURCE_BOOK, WORDS_PER_DAY } from "@/lib/wordmaster/constants";
+import { SOURCE_BOOK } from "@/lib/wordmaster/constants";
 import type { WordMasterEntry } from "@/lib/wordmaster/types";
 
 export async function POST(request: NextRequest) {

@@ -62,6 +62,8 @@ function extractWordPositions(
   text: string
 ): Map<number, { index: number; word: string }> {
   const positions = new Map<number, { index: number; word: string }>();
+  // pdf-parse: "\n0001\nword\n" 형식
+  // pdfjs: "\n0001\nword\n" 또는 "\n0001 \nword\n" 형식 (y좌표 기반 줄바꿈)
   const re = /\n(\d{4})\s*\n([a-zA-Z][\w\s''-]*?)\n/g;
   let m: RegExpExecArray | null;
 
