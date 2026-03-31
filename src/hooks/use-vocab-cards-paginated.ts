@@ -30,7 +30,9 @@ export function useVocabCardsPaginated(deckId: string, opts: PaginatedOpts) {
         .order("position");
 
       if (opts.day) {
-        query = query.contains("tags", [opts.day]);
+        // day_number 컬럼 우선, 없으면 tags 폴백
+        const dayNum = opts.day.replace(/^Day/i, "");
+        query = query.or(`day_number.eq.${dayNum},tags.cs.{${opts.day}}`);
       }
 
       if (opts.search) {

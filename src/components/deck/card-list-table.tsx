@@ -54,10 +54,18 @@ import {
 import { toast } from "sonner";
 import type { VocabCard } from "@/types/database";
 
-function extractDay(tags: string[]): string | null {
-  for (const tag of tags) {
-    const match = tag.match(/^Day(\d+)$/i);
-    if (match) return match[1];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractDay(card: any): string | null {
+  // day_number 컬럼 우선 (Word Master 등)
+  const dayNum = card.day_number as number | null | undefined;
+  if (dayNum != null && dayNum > 0) return String(dayNum);
+  // tags 폴백 (기존 덱)
+  const tags = card.tags as string[] | null | undefined;
+  if (tags) {
+    for (const tag of tags) {
+      const match = tag.match(/^Day(\d+)$/i);
+      if (match) return match[1];
+    }
   }
   return null;
 }
@@ -207,7 +215,7 @@ export function CardListTable({ deckId }: { deckId: string }) {
               </TableHeader>
               <TableBody>
                 {data.cards.map((card, idx) => {
-                  const day = extractDay(card.tags);
+                  const day = extractDay(card);
                   const firstMeaning = card.meanings?.[0];
 
                   return (

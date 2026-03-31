@@ -32,8 +32,11 @@ function filterCardsByDay(cards: (Card | VocabCard)[], day: number | null): (Car
   if (day === null) return cards;
   const tag = `Day${day}`;
   return cards.filter((c) => {
+    // day_number 컬럼 우선 (Word Master 등)
+    if ("day_number" in c && (c as VocabCard).day_number === day) return true;
+    // tags 폴백 (기존 덱)
     const tags = "tags" in c ? (c as { tags: string[] }).tags : [];
-    return tags.some((t) => t.toLowerCase() === tag.toLowerCase());
+    return tags?.some((t) => t.toLowerCase() === tag.toLowerCase());
   });
 }
 

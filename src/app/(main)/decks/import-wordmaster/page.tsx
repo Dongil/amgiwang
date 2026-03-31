@@ -56,7 +56,11 @@ export default function ImportWordMasterPage() {
       pdfjsLib.GlobalWorkerOptions.workerSrc = `${PDFJS_CDN}/pdf.worker.min.mjs`;
 
       const arrayBuf = await file.arrayBuffer();
-      const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+      const pdfDoc = await pdfjsLib.getDocument({
+        data: arrayBuf,
+        cMapUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
+        cMapPacked: true,
+      }).promise;
       let fullText = "";
       for (let i = 1; i <= pdfDoc.numPages; i++) {
         const page = await pdfDoc.getPage(i);
@@ -265,7 +269,7 @@ export default function ImportWordMasterPage() {
 
               {/* Sample Preview - 전체 필드 표시 */}
               <div className="space-y-3">
-                <p className="text-sm font-medium">미리보기 (DAY 1)</p>
+                <p className="text-sm font-medium">미리보기 (DAY 1~2)</p>
                 {sample.map((entry) => (
                   <Card key={entry.wordNumber}>
                     <CardContent className="space-y-3 p-4">
